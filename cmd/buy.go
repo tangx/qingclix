@@ -1,36 +1,47 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // buyCmd represents the buy command
 var buyCmd = &cobra.Command{
 	Use:   "buy",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "根据预设信息购买机器",
+	Long: `根据预设信息购买机器
+  1. 根据 ~/.qingclix/preinstall.json 预设信息，直接选择购买对应的机器
+  2. 使用 -i 进入交互界面，选择自定购买参数`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("buy called")
+		launch()
 	},
 }
 
+var interactive bool
+
 func init() {
 	rootCmd.AddCommand(buyCmd)
+	buyCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "交互模式")
+}
 
-	// Here you will define your flags and configuration settings.
+// launch 创建实例
+func launch() {
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// buyCmd.PersistentFlags().String("foo", "", "A help for foo")
+	if interactive {
+		// 交互模式
+		interaciveMode()
+	} else {
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// buyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+		preinstallMode()
+	}
+
+}
+
+// interaciveMode 交互模式
+func interaciveMode() {}
+
+// preinstallMode 预设模式
+func preinstallMode() {
+	pre := loadPreinstallConfig()
+	item := ChoosePreinstanllConfig(pre)
+	launchPreinstall(item)
 }
