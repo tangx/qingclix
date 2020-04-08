@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
   实现目标根据预设参数或配置，快速实现日常操作`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Do Stuff Here
-		_ := cmd.Help()
+		cmd.Help()
 	},
 }
 
