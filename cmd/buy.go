@@ -42,7 +42,7 @@ func presetMode() {
 	preset := LoadPresetConfig()
 	config := ChooseConfig(preset)
 	// fmt.Println(config)
-	RunInstance(config)
+	RunInstance(config.Instance)
 }
 
 type Preset struct {
@@ -101,9 +101,9 @@ func ChooseConfig(preset Preset) Config {
 	return preset.Configs[choice]
 }
 
-func RunInstance(config Config) {
+func RunInstance(config resources.InstanceRequest) {
 	action := "RunInstances"
-	values, err := query.Values(config.Instance)
+	values, err := query.Values(config)
 	if err != nil {
 		logrus.Fatal("query.Values=", err)
 	}
