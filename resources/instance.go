@@ -19,4 +19,5 @@ type RunInstancesResponse struct {
 	Instances []string `json:"instances"`
 	JobID     string   `json:"job_id"`
 	RetCode   int64    `json:"ret_code"`
+	Message   string   `json:"message"`
 }

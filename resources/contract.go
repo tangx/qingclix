@@ -25,9 +25,16 @@ type ContractResponse struct {
 }
 
 type ContractRequest struct {
-	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty"`
-	Resources []string `yaml:"resources,omitempty" json:"resources,omitempty"`
-	Months    int      `yaml:"months,omitempty" json:"months,omitempty"`
-	AutoRenew int      `yaml:"auto_renew,omitempty" json:"auto_renew,omitempty"`
-	User      string   `yaml:"user,omitempty" json:"user,omitempty"`
+	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
+	Resources []string `yaml:"resources,omitempty" json:"resources,omitempty" url:"resources.1,omitempty"`
+	Months    int      `yaml:"months,omitempty" json:"months,omitempty" url:"months,omitempty"`
+	AutoRenew int      `yaml:"auto_renew,omitempty" json:"auto_renew,omitempty" url:"auto_renew,omitempty"`
+	User      string   `yaml:"user,omitempty" json:"user,omitempty" url:"user,omitempty"`
+}
+
+type ApplyReservedContractWithResourcesResponse struct {
+	Action          string `json:"action"`
+	ApplymentStatus string `json:"applyment_status"`
+	ContractID      string `json:"contract_id"`
+	RetCode         int64  `json:"ret_code"`
 }
