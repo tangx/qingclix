@@ -1,7 +1,18 @@
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"sort"
+
+	"github.com/google/go-querystring/query"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/tangx/qingclix/global"
+	"github.com/tangx/qingclix/resources"
+	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 // buyCmd represents the buy command
@@ -16,32 +27,94 @@ var buyCmd = &cobra.Command{
 	},
 }
 
-var interactive bool
-
 func init() {
 	rootCmd.AddCommand(buyCmd)
-	buyCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "交互模式")
+	// buyCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "交互模式")
 }
 
 // launch 创建实例
 func launch() {
-
-	if interactive {
-		// 交互模式
-		interaciveMode()
-	} else {
-
-		preinstallMode()
-	}
-
+	presetMode()
 }
 
-// interaciveMode 交互模式
-func interaciveMode() {}
+// presetMode 预设模式
+func presetMode() {
+	preset := LoadPresetConfig()
+	config := ChooseConfig(preset)
+	// fmt.Println(config)
+	RunInstance(config)
+}
 
-// preinstallMode 预设模式
-func preinstallMode() {
-	pre := loadPreinstallConfig()
-	item := ChoosePreinstanllConfig(pre)
-	launchPreinstall(item)
+type Preset struct {
+	Configs map[string]Config `yaml:"configs,omitempty" json:"configs,omitempty"`
+}
+
+type Config struct {
+	Instance resources.InstanceRequest `yaml:"instance,omitempty" json:"instance,omitempty"`
+	Volume   resources.VolumeRequest   `yaml:"volume,omitempty" json:"volume,omitempty"`
+}
+
+// LoadPresetConfig 读取预设配置
+func LoadPresetConfig() Preset {
+	body, err := ioutil.ReadFile(global.PresetConfig())
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// fmt.Printf("%s\n", body)
+
+	var preset Preset
+	err = json.Unmarshal(body, &preset)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// fmt.Println(preset)
+
+	return preset
+}
+
+// ChooseConfig 选择预设配置
+func ChooseConfig(preset Preset) Config {
+
+	var option []string
+	for k := range preset.Configs {
+		option = append(option, k)
+	}
+	// 结果排序，优化展示效果
+	sort.Strings(option)
+
+	// 选择
+	var qs = []*survey.Question{
+		{
+			Name: "choice",
+			Prompt: &survey.Select{
+				Message: "选择购买配置: ",
+				Options: option,
+			},
+		},
+	}
+	var choice string
+	err := survey.Ask(qs, &choice)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return preset.Configs[choice]
+}
+
+func RunInstance(config Config) {
+	action := "RunInstances"
+	values, err := query.Values(config.Instance)
+	if err != nil {
+		logrus.Fatal("query.Values=", err)
+	}
+	// fmt.Println(values)
+
+	// fmt.Println("RunInstance", action)
+	cli := global.LoginQingyun()
+	body, err := cli.GetByUrlValues(action, values)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	fmt.Printf("%s\n", body)
+
 }

@@ -1,31 +1,23 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/url"
 	"testing"
+
+	"github.com/google/go-querystring/query"
+	"github.com/sirupsen/logrus"
 )
 
-func Test_loadConfig(t *testing.T) {
-	config := loadPreinstallConfig()
-	for k := range config.Instance {
-		fmt.Println("k =", k)
+func Test_LoadPresetCofnig(t *testing.T) {
+	preset := LoadPresetConfig()
+	// config := ChooseConfig(preset)
+	config := preset.Configs["dev--ubuntu1604-2c4g-200g"]
+	fmt.Println(config)
+	values, err := query.Values(config)
+	if err != nil {
+		logrus.Fatal("query.Values=", err)
 	}
+	// fmt.Println(values)
+	fmt.Println(values.Encode())
 
-	// ChoosePreinstanllConfig(config)
-
-	ins := config.Instance["ubuntu1804"]
-
-	m := make(map[string]string)
-	// j := InstanceItem{}
-	b, _ := json.Marshal(ins)
-	json.Unmarshal(b, &m)
-	fmt.Println(m)
-
-	uv := url.Values{}
-	for k, v := range m {
-		uv.Set(k, v)
-	}
-	fmt.Println(uv.Encode())
 }
