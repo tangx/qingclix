@@ -1,5 +1,14 @@
 package resources
 
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/google/go-querystring/query"
+	"github.com/sirupsen/logrus"
+	"github.com/tangx/qingyun-sdk-go"
+)
+
 type InstanceRequest struct {
 	ImageId       string          `yaml:"image_id,omitempty" json:"image_id,omitempty" url:"image_id,omitempty"`
 	CPU           string          `yaml:"cpu,omitempty" json:"cpu,omitempty" url:"cpu,omitempty"`
@@ -20,4 +29,25 @@ type RunInstancesResponse struct {
 	JobID     string   `json:"job_id"`
 	RetCode   int64    `json:"ret_code"`
 	Message   string   `json:"message"`
+}
+
+func RunInstance(cli *qingyun.Client, config InstanceRequest) (resp RunInstancesResponse) {
+	action := "RunInstances"
+	values, err := query.Values(config)
+	if err != nil {
+		logrus.Fatal("query.Values=", err)
+	}
+
+	body, err := cli.GetByUrlValues(action, values)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	fmt.Printf("%s\n", body)
+
+	// var resp resources.RunInstancesResponse
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	return
 }

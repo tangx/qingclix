@@ -1,5 +1,14 @@
 package resources
 
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/google/go-querystring/query"
+	"github.com/sirupsen/logrus"
+	"github.com/tangx/qingyun-sdk-go"
+)
+
 type ContractResponse struct {
 	AutoRenew         int64         `json:"auto_renew,omitempty" yaml:"auto_renew,omitempty"`
 	Currency          string        `json:"currency,omitempty" yaml:"currency,omitempty"`
@@ -37,4 +46,31 @@ type ApplyReservedContractWithResourcesResponse struct {
 	ApplymentStatus string `json:"applyment_status"`
 	ContractID      string `json:"contract_id"`
 	RetCode         int64  `json:"ret_code"`
+}
+
+type LeaseReservedContractRequest struct {
+	Contract         string `json:"contract,omitempty" url:"contract,omitempty"`
+	UnlimitedUpgrade string `json:"unlimited_upgrade,omitempty" url:"unlimited_upgrade,omitempty"`
+}
+
+func ApplyReservedContractWithResources(cli *qingyun.Client, contract ContractRequest, resource string, zone string) (resp ApplyReservedContractWithResourcesResponse) {
+	action := "ApplyReservedContractWithResources"
+	contract.Zone = zone
+	contract.Resources = append(contract.Resources, resource)
+
+	values, err := query.Values(contract)
+	if err != nil {
+		logrus.Fatal()
+	}
+	body, err := cli.GetByUrlValues(action, values)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	fmt.Printf("%s\n", body)
+
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	return resp
 }

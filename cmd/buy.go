@@ -3,17 +3,14 @@ package cmd
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"sort"
 
-	"github.com/google/go-querystring/query"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/resources"
-	"github.com/tangx/qingyun-sdk-go"
 	"gopkg.in/AlecAivazis/survey.v1"
 )
 
@@ -48,7 +45,7 @@ func presetMode() {
 	cli := global.LoginQingyun()
 
 	// 购买机器
-	runResp := RunInstance(cli, config.Instance)
+	runResp := resources.RunInstance(cli, config.Instance)
 	if runResp.RetCode != 0 {
 		// fmt.Println(runResp.RetCode)
 		err := errors.New(runResp.Message)
@@ -57,7 +54,7 @@ func presetMode() {
 
 	// 购买合约
 	if len(runResp.Instances) == 1 {
-		ApplyReservedContractWithResources(cli, config.Instance.Contract, runResp.Instances[0], config.Instance.Zone)
+		resources.ApplyReservedContractWithResources(cli, config.Instance.Contract, runResp.Instances[0], config.Instance.Zone)
 	}
 }
 
@@ -115,43 +112,4 @@ func ChooseConfig(preset Preset) Config {
 	}
 
 	return preset.Configs[choice]
-}
-
-func RunInstance(cli *qingyun.Client, config resources.InstanceRequest) (resp resources.RunInstancesResponse) {
-	action := "RunInstances"
-	values, err := query.Values(config)
-	if err != nil {
-		logrus.Fatal("query.Values=", err)
-	}
-
-	body, err := cli.GetByUrlValues(action, values)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	fmt.Printf("%s\n", body)
-
-	// var resp resources.RunInstancesResponse
-	err = json.Unmarshal(body, &resp)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	return
-
-}
-
-func ApplyReservedContractWithResources(cli *qingyun.Client, contract resources.ContractRequest, resource string, zone string) {
-	action := "ApplyReservedContractWithResources"
-	contract.Zone = zone
-	contract.Resources = append(contract.Resources, resource)
-
-	values, err := query.Values(contract)
-	if err != nil {
-		logrus.Fatal()
-	}
-	resp, err := cli.GetByUrlValues(action, values)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	fmt.Printf("%s\n", resp)
-
 }
