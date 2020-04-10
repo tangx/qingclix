@@ -53,12 +53,53 @@ type LeaseReservedContractRequest struct {
 	UnlimitedUpgrade string `json:"unlimited_upgrade,omitempty" url:"unlimited_upgrade,omitempty"`
 }
 
-func ApplyReservedContractWithResources(cli *qingyun.Client, contract ContractRequest, resource string, zone string) (resp ApplyReservedContractWithResourcesResponse) {
+// ApplyReservedContractWithResources 购买匹配资源的合约
+func ApplyReservedContractWithResources(cli *qingyun.Client, contract ContractRequest) (resp ApplyReservedContractWithResourcesResponse) {
+	fmt.Printf("开始购买合约... ")
 	action := "ApplyReservedContractWithResources"
-	contract.Zone = zone
-	contract.Resources = append(contract.Resources, resource)
 
 	values, err := query.Values(contract)
+	if err != nil {
+		logrus.Fatal()
+	}
+	body, err := cli.GetByUrlValues(action, values)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	fmt.Printf("%s\n", body)
+
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	return resp
+}
+
+// type AssociateReservedContractResquest struct{}
+type AssociateReservedContractResponse struct {
+	Fail    []interface{} `json:"fail"`
+	Action  string        `json:"action"`
+	Success []string      `json:"success"`
+	RetCode int64         `json:"ret_code"`
+	Message string        `json:"message"`
+}
+
+type AssociateReservedContractRequest struct {
+	Contract  string   `yaml:"contract,omitempty" json:"contract,omitempty" url:"contract,omitempty"`
+	Resources []string `yaml:"resources,omitempty" json:"resources,omitempty" url:"resources.1,omitempty"`
+}
+
+// AssociateReservedContract 绑定合约和资源
+func AssociateReservedContract(cli *qingyun.Client, contract string, resources []string) (resp AssociateReservedContractResponse) {
+	fmt.Printf("绑定资源到合约... ")
+
+	action := "AssociateReservedContract"
+	params := AssociateReservedContractRequest{
+		Contract:  contract,
+		Resources: resources,
+	}
+
+	values, err := query.Values(params)
 	if err != nil {
 		logrus.Fatal()
 	}

@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"sort"
@@ -45,17 +46,23 @@ func presetMode() {
 	cli := global.LoginQingyun()
 
 	// 购买机器
-	runResp := resources.RunInstance(cli, config.Instance)
+	runResp := resources.RunInstances(cli, config.Instance)
 	if runResp.RetCode != 0 {
 		// fmt.Println(runResp.RetCode)
 		err := errors.New(runResp.Message)
 		logrus.Fatal(err)
 	}
 
+	contract := config.Contract
+	contract.Zone = config.Instance.Zone
+	contract.Resources = runResp.Instances
+
 	// 购买合约
-	if len(runResp.Instances) == 1 {
-		resources.ApplyReservedContractWithResources(cli, config.Instance.Contract, runResp.Instances[0], config.Instance.Zone)
-	}
+	applyContractResp := resources.ApplyReservedContractWithResources(cli, contract)
+
+	// 	// 绑定
+	AssociateResp := resources.AssociateReservedContract(cli, applyContractResp.ContractID, runResp.Instances)
+	fmt.Println(AssociateResp)
 }
 
 type Preset struct {
@@ -65,6 +72,7 @@ type Preset struct {
 type Config struct {
 	Instance resources.InstanceRequest `yaml:"instance,omitempty" json:"instance,omitempty"`
 	Volume   resources.VolumeRequest   `yaml:"volume,omitempty" json:"volume,omitempty"`
+	Contract resources.ContractRequest `yaml:"contract,omitempty" json:"contract,omitempty"`
 }
 
 // LoadPresetConfig 读取预设配置
