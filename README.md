@@ -4,7 +4,7 @@
 
 ## 使用到的库
 
-+ `struct` 转 `url.Values`: `github.com/google/go-querystring/query`
++ `struct` 转 `url.Values`: `github.com/tangx/go-querystring/query`
 
 ```go
 // The URL parameter name defaults to the struct field name but can be

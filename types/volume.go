@@ -1,4 +1,4 @@
-package resources
+package types
 
 type VolumeRequest struct {
 	Size       string `json:"size,omitempty" yaml:"size,omitempty" url:"size,omitempty"`

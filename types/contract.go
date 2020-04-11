@@ -1,11 +1,11 @@
-package resources
+package types
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/google/go-querystring/query"
 	"github.com/sirupsen/logrus"
+	"github.com/tangx/go-querystring/query"
 	"github.com/tangx/qingyun-sdk-go/qingyun"
 )
 
@@ -28,7 +28,7 @@ type ContractRequest struct {
 	ReservedContracts  []string            `yaml:"reserved_contracts,omitempty" json:"reserved_contracts,omitempty" url:"reserved_contracts,omitempty"`
 	ResourceType       string              `yaml:"resource_type,omitempty" json:"resource_type,omitempty" url:"resource_type,omitempty"`
 	ResourceTypes      []string            `yaml:"resource_types,omitempty" json:"resource_types,omitempty" url:"resource_types,omitempty"`
-	Resources          []string            `yaml:"resources,omitempty" json:"resources,omitempty" url:"resources.1,omitempty"`
+	Resources          []string            `yaml:"resources,omitempty" json:"resources,omitempty" url:"resources,omitempty"`
 	Reverse            int                 `yaml:"reverse,omitempty" json:"reverse,omitempty" url:"reverse,omitempty"`
 	SearchWord         string              `yaml:"search_word,omitempty" json:"search_word,omitempty" url:"search_word,omitempty"`
 	SortKey            string              `yaml:"sort_key,omitempty" json:"sort_key,omitempty" url:"sort_key,omitempty"`

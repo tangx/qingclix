@@ -1,11 +1,11 @@
-package resources
+package types
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/google/go-querystring/query"
 	"github.com/sirupsen/logrus"
+	"github.com/tangx/go-querystring/query"
 	"github.com/tangx/qingyun-sdk-go/qingyun"
 )
 
@@ -19,7 +19,7 @@ type InstanceRequest struct {
 	LoginKeypair  string   `yaml:"login_keypair,omitempty" json:"login_keypair,omitempty" url:"login_keypair,omitempty"`
 	InstanceName  string   `yaml:"instance_name,omitempty" json:"instance_name,omitempty" url:"instance_name,omitempty"`
 	Zone          string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
-	Vxnets        []string `yaml:"vxnets,omitempty" json:"vxnets,omitempty" url:"vxnets.1,omitempty"`
+	Vxnets        []string `yaml:"vxnets,omitempty" json:"vxnets,omitempty" url:"vxnets,omitempty"`
 }
 
 type RunInstancesResponse struct {
@@ -51,4 +51,13 @@ func RunInstances(cli *qingyun.Client, config InstanceRequest) (resp RunInstance
 		logrus.Fatal(err)
 	}
 	return
+}
+
+type DescribeInstancesRequest struct {
+	Instances     []string
+	ImageID       []string
+	InstanceType  []string
+	InstanceClass int
+}
+type DescribeInstancesResponse struct {
 }
