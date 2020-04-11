@@ -6,7 +6,6 @@ type ApplyReservedContractWithResourcesRequest struct {
 	Months    int      `yaml:"months,omitempty" json:"months,omitempty" url:"months,omitempty"`
 	AutoRenew int      `yaml:"auto_renew,omitempty" json:"auto_renew,omitempty" url:"auto_renew,omitempty"`
 	User      string   `yaml:"user,omitempty" json:"user,omitempty" url:"user,omitempty"`
-	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 }
 type ApplyReservedContractWithResourcesResponse struct {
 	Action          string `json:"action"`
@@ -20,7 +19,7 @@ func (cli *Client) ApplyReservedContractWithResources(params ApplyReservedContra
 	return
 }
 
-type AssociateReservedContractResquest struct {
+type AssociateReservedContractRequest struct {
 	Contract  string   `yaml:"contract,omitempty" json:"contract,omitempty" url:"contract,omitempty"`
 	Resources []string `yaml:"resources,omitempty" json:"resources,omitempty" url:"resources,omitempty,dotnumbered,numbered1"`
 }

@@ -39,3 +39,51 @@ func Test_RunInstances(t *testing.T) {
 
 	fmt.Println(resp)
 }
+
+func Test_CreateVolume(t *testing.T) {
+	cli := Client{}
+
+	params := CreateVolumesRequest{
+		Size:       100,
+		VolumeName: "tangxin-test",
+		VolumeType: 2,
+		Zone:       "pek3d",
+	}
+
+	resp, err := cli.CreateVolumes(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp)
+}
+
+func Test_AttachVolume(t *testing.T) {
+	cli := Client{}
+	params := AttachVolumesRequest{
+		Volumes:  []string{"vol-uy2pywe2"},
+		Instance: "i-x7ulv2i5",
+		Zone:     "pek3d",
+	}
+	resp, err := cli.AttachVolumes(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp)
+}
+
+func Test_DetachVolume(t *testing.T) {
+	cli := Client{}
+	params := DetachVolumesRequest{
+		Volumes:  []string{"vol-uy2pywe2"},
+		Instance: "i-x7ulv2i5",
+		Zone:     "pek3d",
+	}
+	resp, err := cli.DetachVolumes(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp)
+}

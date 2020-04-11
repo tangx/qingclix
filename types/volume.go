@@ -1,16 +1,28 @@
 package types
 
-type VolumeRequest struct {
-	Size       string `json:"size,omitempty" yaml:"size,omitempty" url:"size,omitempty"`
+type CreateVolumesRequest struct {
+	Size       int    `json:"size,omitempty" yaml:"size,omitempty" url:"size,omitempty"`
 	VolumeName string `json:"volume_name,omitempty" yaml:"volume_name,omitempty" url:"volume_name,omitempty"`
-	VolumeType string `json:"volume_type,omitempty" yaml:"volume_type,omitempty" url:"volume_type,omitempty"`
+	VolumeType int    `json:"volume_type,omitempty" yaml:"volume_type,omitempty" url:"volume_type,omitempty"`
+	Count      int    `yaml:"count,omitempty" json:"count,omitempty" url:"count,omitempty"`
 	Zone       string `json:"zone,omitempty" yaml:"zone,omitempty" url:"zone,omitempty"`
-	Months     string `json:"months,omitempty" yaml:"months,omitempty" url:"months,omitempty"`
-	AutoRenew  string `json:"auto_renew,omitempty" yaml:"auto_renew,omitempty" url:"auto_renew,omitempty"`
+	Encryption string `yaml:"encryption,omitempty" json:"encryption,omitempty" url:"encryption,omitempty"`
+	CipherALG  string `yaml:"cipher_alg,omitempty" json:"cipher_alg,omitempty" url:"cipher_alg,omitempty"`
+}
+type CreateVolumesResponse struct {
+	Action  string   `url:"action,omitempty"`
+	JobID   string   `url:"job_id,omitempty"`
+	Volumes []string `url:"volumes,omitempty"`
+	RetCode int      `url:"ret_code,omitempty"`
 }
 
-type AttachVolumesResquest struct {
-	Volumes  []string `yaml:"volumes,omitempty" json:"volumes,omitempty" url:"volumes,omitempty"`
+func (cli *Client) CreateVolumes(params CreateVolumesRequest) (resp CreateVolumesResponse, err error) {
+	err = cli.Get("CreateVolumes", params, &resp)
+	return
+}
+
+type AttachVolumesRequest struct {
+	Volumes  []string `yaml:"volumes,omitempty" json:"volumes,omitempty" url:"volumes,omitempty,dotnumbered,numbered1"`
 	Instance string   `yaml:"instance,omitempty" json:"instance,omitempty" url:"instance,omitempty"`
 	Zone     string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 }
@@ -18,5 +30,18 @@ type AttachVolumesResquest struct {
 type AttachVolumesResponse struct {
 	Action  string `yaml:"action,omitempty" json:"action,omitempty"`
 	JobID   string `yaml:"job_id,omitempty" json:"job_id,omitempty"`
-	RetCode string `yaml:"ret_code,omitempty" json:"ret_code,omitempty"`
+	RetCode int    `yaml:"ret_code,omitempty" json:"ret_code,omitempty"`
+}
+
+func (cli *Client) AttachVolumes(params AttachVolumesRequest) (resp AttachVolumesResponse, err error) {
+	err = cli.Get("AttachVolumes", params, &resp)
+	return
+}
+
+type DetachVolumesRequest = AttachVolumesRequest
+type DetachVolumesResponse = AttachVolumesResponse
+
+func (cli *Client) DetachVolumes(params DetachVolumesRequest) (resp DetachVolumesResponse, err error) {
+	err = cli.Get("DetachVolumes", params, &resp)
+	return
 }
