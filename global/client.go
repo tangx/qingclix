@@ -2,7 +2,7 @@ package global
 
 import (
 	"github.com/tangx/qingclix/utils"
-	"github.com/tangx/qingyun-sdk-go"
+	"github.com/tangx/qingyun-sdk-go/qingyun"
 )
 
 const (

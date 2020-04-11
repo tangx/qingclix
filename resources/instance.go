@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/go-querystring/query"
 	"github.com/sirupsen/logrus"
-	"github.com/tangx/qingyun-sdk-go"
+	"github.com/tangx/qingyun-sdk-go/qingyun"
 )
 
 type InstanceRequest struct {
