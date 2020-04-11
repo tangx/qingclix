@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/global"
-	"github.com/tangx/qingclix/resources"
+	"github.com/tangx/qingclix/types"
 	"gopkg.in/AlecAivazis/survey.v1"
 )
 
@@ -32,6 +31,15 @@ func init() {
 	// buyCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "交互模式")
 }
 
+type PresetConfig struct {
+	Configs map[string]ItemConfig `yaml:"configs,omitempty" json:"configs,omitempty"`
+}
+type ItemConfig struct {
+	Instance types.RunInstancesRequest  `yaml:"instance,omitempty" json:"instance,omitempty"`
+	Volume   types.CreateVolumesRequest `yaml:"volume,omitempty" json:"volume,omitempty"`
+	Contract types.CreateVolumesRequest `yaml:"contract,omitempty" json:"contract,omitempty"`
+}
+
 // launch 创建实例
 func launch() {
 	presetMode()
@@ -40,50 +48,58 @@ func launch() {
 // presetMode 预设模式
 func presetMode() {
 
+	cli := types.Client{}
+
 	preset := LoadPresetConfig()
-	config := ChooseConfig(preset)
+	// instance := preset.Configs
+	// fmt.Println(preset)
+	choiceConfig := ChooseConfig(preset)
+	// contract := choiceConfig.Contract
 
-	cli := global.LoginQingyun()
-
-	// 购买机器
-	runResp := resources.RunInstances(cli, config.Instance)
-	if runResp.RetCode != 0 {
-		// fmt.Println(runResp.RetCode)
-		err := errors.New(runResp.Message)
-		logrus.Fatal(err)
+	// 创建 instance 实例
+	fmt.Printf("购买主机....")
+	instance := choiceConfig.Instance
+	runInsResp, err := cli.RunInstances(instance)
+	if err != nil {
+		panic(err)
 	}
+	fmt.Println(runInsResp.Instances[0])
 
-	contract := config.Contract
-	contract.Zone = config.Instance.Zone
-	contract.Resources = runResp.Instances
+	// 创建 volume 硬盘
+	fmt.Printf("购买硬盘....")
+	volume := choiceConfig.Volume
+	volume.Zone = instance.Zone // 保证 volume 和 instance 在相同可用区
+	volume.VolumeName = instance.InstanceName
+	createVolumeResp, err := cli.CreateVolumes(volume)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(createVolumeResp.Volumes)
 
-	// 购买合约
-	applyContractResp := resources.ApplyReservedContractWithResources(cli, contract)
+	// 绑定 volume 到 instance
 
-	// 	// 绑定
-	AssociateResp := resources.AssociateReservedContract(cli, applyContractResp.ContractID, runResp.Instances)
-	fmt.Println(AssociateResp)
-}
-
-type Preset struct {
-	Configs map[string]Config `yaml:"configs,omitempty" json:"configs,omitempty"`
-}
-
-type Config struct {
-	Instance resources.InstanceRequest `yaml:"instance,omitempty" json:"instance,omitempty"`
-	Volume   resources.VolumeRequest   `yaml:"volume,omitempty" json:"volume,omitempty"`
-	Contract resources.ContractRequest `yaml:"contract,omitempty" json:"contract,omitempty"`
+	fmt.Println("绑定 volume 到 instance....")
+	attachVolParams := types.AttachVolumesRequest{
+		Volumes:  createVolumeResp.Volumes,
+		Instance: runInsResp.Instances[0],
+		Zone:     volume.Zone,
+	}
+	attachVolumeResp, err := cli.AttachVolumes(attachVolParams)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(attachVolumeResp)
 }
 
 // LoadPresetConfig 读取预设配置
-func LoadPresetConfig() Preset {
-	body, err := ioutil.ReadFile(global.PresetConfig())
+func LoadPresetConfig() PresetConfig {
+	body, err := ioutil.ReadFile(global.ConfigFile)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 	// fmt.Printf("%s\n", body)
 
-	var preset Preset
+	var preset PresetConfig
 	err = json.Unmarshal(body, &preset)
 	if err != nil {
 		logrus.Fatal(err)
@@ -94,7 +110,7 @@ func LoadPresetConfig() Preset {
 }
 
 // ChooseConfig 选择预设配置
-func ChooseConfig(preset Preset) Config {
+func ChooseConfig(preset PresetConfig) ItemConfig {
 
 	var option []string
 	for k := range preset.Configs {
