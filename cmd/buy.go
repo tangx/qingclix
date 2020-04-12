@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"sort"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -59,11 +60,11 @@ func presetMode() {
 	// 创建 instance 实例
 	fmt.Printf("购买主机....")
 	instance := choiceConfig.Instance
-	runInsResp, err := cli.RunInstances(instance)
+	runInstanceResp, err := cli.RunInstances(instance)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(runInsResp.Instances[0])
+	fmt.Println(runInstanceResp.Instances[0])
 
 	// 创建 volume 硬盘
 	fmt.Printf("购买硬盘....")
@@ -76,12 +77,28 @@ func presetMode() {
 	}
 	fmt.Println(createVolumeResp.Volumes)
 
-	// 绑定 volume 到 instance
+	// 判断服务器是否为可用状态
+	fmt.Printf("判断服务器是否为 running 状态 ..")
+	descInstanceParams := types.DescribeInstancesRequest{
+		Zone:      instance.Zone,
+		Instances: runInstanceResp.Instances,
+		Status:    []string{"running"},
+	}
+	for {
+		resp, _ := cli.DescribeInstances(descInstanceParams)
+		if resp.TotalCount == 1 {
+			fmt.Println(".. OK")
+			break
+		}
+		time.Sleep(1 * time.Second)
+		fmt.Printf(".")
+	}
 
-	fmt.Println("绑定 volume 到 instance....")
+	// 绑定 volume 到 instance
+	fmt.Printf("绑定 volume 到 instance....")
 	attachVolParams := types.AttachVolumesRequest{
 		Volumes:  createVolumeResp.Volumes,
-		Instance: runInsResp.Instances[0],
+		Instance: runInstanceResp.Instances[0],
 		Zone:     volume.Zone,
 	}
 	attachVolumeResp, err := cli.AttachVolumes(attachVolParams)
