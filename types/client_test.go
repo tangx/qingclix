@@ -87,3 +87,22 @@ func Test_DetachVolume(t *testing.T) {
 
 	fmt.Println(resp)
 }
+
+func Test_DescribeInstances(t *testing.T) {
+	cli := Client{}
+	instance := "i-j33tcu6f"
+	instance2 := "i-z625fhdq"
+	status := "running"
+	params := DescribeInstancesRequest{
+		Instances: []string{instance, instance2},
+		Status:    []string{status},
+		Zone:      "pek3",
+	}
+
+	resp, err := cli.DescribeInstances(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp)
+}
