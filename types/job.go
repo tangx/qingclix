@@ -17,19 +17,19 @@ type DescribeJobsResponse struct {
 }
 
 type JobSet struct {
-	Status      string      `json:"status,omitempty"`
-	JobID       string      `json:"job_id,omitempty"`
-	JobAction   string      `json:"job_action,omitempty"`
-	CreateTime  string      `json:"create_time,omitempty"`
-	Owner       string      `json:"owner,omitempty"`
-	StatusTime  string      `json:"status_time,omitempty"`
-	ErrorCodes  string      `json:"error_codes,omitempty"`
-	ResourceIDS string      `json:"resource_ids,omitempty"`
-	Resources   Resources   `json:"resources,omitempty"`
-	Extras      interface{} `json:"extras,omitempty"`
+	Status      string        `json:"status,omitempty"`
+	JobID       string        `json:"job_id,omitempty"`
+	JobAction   string        `json:"job_action,omitempty"`
+	CreateTime  string        `json:"create_time,omitempty"`
+	Owner       string        `json:"owner,omitempty"`
+	StatusTime  string        `json:"status_time,omitempty"`
+	ErrorCodes  string        `json:"error_codes,omitempty"`
+	ResourceIDS string        `json:"resource_ids,omitempty"`
+	Resources   JobsResources `json:"resources,omitempty"`
+	Extras      interface{}   `json:"extras,omitempty"`
 }
 
-type Resources struct {
+type JobsResources struct {
 	Instance string   `json:"instance,omitempty"`
 	Volumes  []string `json:"volumes,omitempty"`
 }
