@@ -125,6 +125,11 @@ func presetMode() {
 		panic(err)
 	}
 	fmt.Println(attachVolumeResp)
+
+	// todo: 根据服务器配置
+	// 1. 创建 Contract
+	// 2. 付费 Contract
+	// 3. 绑定 服务器到 Contract
 }
 
 // LoadPresetConfig 读取预设配置
