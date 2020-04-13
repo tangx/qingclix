@@ -21,9 +21,22 @@ var buyCmd = &cobra.Command{
 	},
 }
 
+// Flags 变量
+var (
+	// 执行模式
+	mode string
+)
+
+const (
+	ModeDesc = `服务器购买模式
+clone: 克隆一台已有机器
+interactive: 交互提示购买
+preset: 预设值模式, 从 ~/.qingclix/config.json 中读取预设文件`
+)
+
 func init() {
 	rootCmd.AddCommand(buyCmd)
-	// buyCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "交互模式")
+	buyCmd.Flags().StringVarP(&mode, "mode", "m", "preset", ModeDesc)
 }
 
 type PresetConfig struct {
@@ -37,7 +50,17 @@ type ItemConfig struct {
 
 // launch 创建实例
 func launch() {
-	presetMode()
+	switch mode {
+	case "preset":
+		presetMode()
+	// case "clone":
+	// 	cloneMode()
+	// case "interactive":
+	// 	interactiveMode()
+	default:
+		presetMode()
+	}
+
 }
 
 // launchInstance 根据配置，购买服务器、磁盘及合约
