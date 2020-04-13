@@ -1,18 +1,11 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"sort"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/types"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 // buyCmd represents the buy command
@@ -44,64 +37,6 @@ type ItemConfig struct {
 // launch 创建实例
 func launch() {
 	presetMode()
-}
-
-// presetMode 预设模式
-func presetMode() {
-	preset := LoadPresetConfig()
-	// instance := preset.Configs
-	// fmt.Println(preset)
-	item := ChooseConfig(preset)
-
-	launchInstance(item)
-
-}
-
-// LoadPresetConfig 读取预设配置
-func LoadPresetConfig() PresetConfig {
-	body, err := ioutil.ReadFile(global.ConfigFile)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	// fmt.Printf("%s\n", body)
-
-	var preset PresetConfig
-	err = json.Unmarshal(body, &preset)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	// fmt.Println(preset)
-
-	return preset
-}
-
-// ChooseConfig 选择预设配置
-func ChooseConfig(preset PresetConfig) ItemConfig {
-
-	var option []string
-	for k := range preset.Configs {
-		option = append(option, k)
-	}
-	// 结果排序，优化展示效果
-	sort.Strings(option)
-
-	// 选择
-	var qs = []*survey.Question{
-		{
-			Name: "choice",
-			Prompt: &survey.Select{
-				Message: "选择购买配置: ",
-				Options: option,
-			},
-		},
-	}
-	var choice string
-	err := survey.Ask(qs, &choice)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return preset.Configs[choice]
 }
 
 func launchInstance(itemConfig ItemConfig) {
