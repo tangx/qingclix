@@ -77,18 +77,6 @@ func launchInstance(itemConfig ItemConfig) {
 		panic(err)
 	}
 	fmt.Println(runInstanceResp)
-	// fmt.Println(runInstanceResp.Instances)
-
-	// 创建 volume 硬盘
-	fmt.Printf("购买硬盘....")
-	volume := itemConfig.Volume
-	volume.Zone = instance.Zone // 保证 volume 和 instance 在相同可用区
-	volume.VolumeName = instance.InstanceName
-	createVolumeResp, err := cli.CreateVolumes(volume)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(createVolumeResp)
 
 	// 判断服务器是否为可用状态
 	fmt.Printf("等待服务器是否为 running 状态 ..")
@@ -106,6 +94,17 @@ func launchInstance(itemConfig ItemConfig) {
 		time.Sleep(1 * time.Second)
 		fmt.Printf(".")
 	}
+
+	// 创建 volume 硬盘
+	fmt.Printf("购买硬盘....")
+	volume := itemConfig.Volume
+	volume.Zone = instance.Zone // 保证 volume 和 instance 在相同可用区
+	volume.VolumeName = instance.InstanceName
+	createVolumeResp, err := cli.CreateVolumes(volume)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(createVolumeResp)
 
 	// 判断 volume 的状态是否为需求状态。
 	// ex:
@@ -217,4 +216,20 @@ func ApplyLeaseAssociateContract(cli types.Client, params types.ApplyReservedCon
 	fmt.Println("..OK")
 	return true
 
+}
+
+// buyInstance 购买主机实例
+func buyInstance(instance types.RunInstancesRequest) (instances []string) {
+	return
+}
+
+// buyVolumeForInstance 为主机购买硬盘
+// 注意 可用区 与 磁盘类型 匹配
+func buyVolumeForInstance(instance string, volume_size int) (volumes []string) {
+	return
+}
+
+// payResources 对传入资源创建预留合约，并付费
+func payResources(resources []string, months int, auto_renew int) (ok bool) {
+	return
 }
