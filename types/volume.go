@@ -47,11 +47,11 @@ func (cli *Client) DetachVolumes(params DetachVolumesRequest) (resp DetachVolume
 }
 
 type DescribeVolumesRequest struct {
-	Volumes    []string `yaml:"volumes,omitempty" json:"volumes,omitempty" url:"volumes,omitempty"`
+	Volumes    []string `yaml:"volumes,omitempty" json:"volumes,omitempty" url:"volumes,omitempty,dotnumbered,numbered1"`
 	VolumeType int      `yaml:"volume_type,omitempty" json:"volume_type,omitempty" url:"volume_type,omitempty"`
-	Status     []string `yaml:"status,omitempty" json:"status,omitempty" url:"status,omitempty"`
+	Status     []string `yaml:"status,omitempty" json:"status,omitempty" url:"status,omitempty,dotnumbered,numbered1"`
 	SearchWord string   `yaml:"search_word,omitempty" json:"search_word,omitempty" url:"search_word,omitempty"`
-	Tags       []string `yaml:"tags,omitempty" json:"tags,omitempty" url:"tags,omitempty"`
+	Tags       []string `yaml:"tags,omitempty" json:"tags,omitempty" url:"tags,omitempty,dotnumbered,numbered1"`
 	Verbose    int      `yaml:"verbose,omitempty" json:"verbose,omitempty" url:"verbose,omitempty"`
 	Offset     int      `yaml:"offset,omitempty" json:"offset,omitempty" url:"offset,omitempty"`
 	Limit      int      `yaml:"limit,omitempty" json:"limit,omitempty" url:"limit,omitempty"`
@@ -59,9 +59,9 @@ type DescribeVolumesRequest struct {
 }
 type DescribeVolumesResponse struct {
 	Action     string        `json:"action,omitempty"`
-	TotalCount int64         `json:"total_count,omitempty"`
+	TotalCount int           `json:"total_count,omitempty"`
 	VolumeSet  []interface{} `json:"volume_set,omitempty"`
-	RetCode    int64         `json:"ret_code,omitempty"`
+	RetCode    int           `json:"ret_code,omitempty"`
 }
 
 func (cli *Client) DescribeVolumes(params DescribeVolumesRequest) (resp DescribeVolumesResponse, err error) {

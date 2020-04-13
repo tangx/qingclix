@@ -106,3 +106,21 @@ func Test_DescribeInstances(t *testing.T) {
 
 	fmt.Println(resp)
 }
+
+func Test_DescribeVolumes(t *testing.T) {
+	cli := Client{}
+	instance := "vol-pnque7xf"
+	status := "available"
+	params := DescribeVolumesRequest{
+		Volumes: []string{instance},
+		Status:  []string{status},
+		Zone:    "pek3",
+	}
+
+	resp, err := cli.DescribeVolumes(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp)
+}

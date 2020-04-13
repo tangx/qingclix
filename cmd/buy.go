@@ -97,6 +97,21 @@ func presetMode() {
 	// 判断 volume 的状态是否为需求状态。
 	// ex:
 	// func IsReadyVolume(volume string,status string) (ok bool) {}
+	fmt.Printf("判断磁盘是否为 available 状态 ..")
+	descVolumeParams := types.DescribeVolumesRequest{
+		Zone:    instance.Zone,
+		Volumes: createVolumeResp.Volumes,
+		Status:  []string{"available"},
+	}
+	for {
+		resp, _ := cli.DescribeVolumes(descVolumeParams)
+		if resp.TotalCount == len(descVolumeParams.Volumes) {
+			fmt.Println(".. OK")
+			break
+		}
+		time.Sleep(1 * time.Second)
+		fmt.Printf(".")
+	}
 
 	// 绑定 volume 到 instance
 	fmt.Printf("绑定 volume 到 instance....")

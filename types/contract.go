@@ -11,7 +11,7 @@ type ApplyReservedContractWithResourcesResponse struct {
 	Action          string `json:"action"`
 	ApplymentStatus string `json:"applyment_status"`
 	ContractID      string `json:"contract_id"`
-	RetCode         int64  `json:"ret_code"`
+	RetCode         int    `json:"ret_code"`
 }
 
 func (cli *Client) ApplyReservedContractWithResources(params ApplyReservedContractWithResourcesRequest) (resp ApplyReservedContractWithResourcesResponse, err error) {
@@ -27,7 +27,7 @@ type AssociateReservedContractResponse struct {
 	Fail    []interface{} `json:"fail,omitempty"`
 	Action  string        `json:"action,omitempty"`
 	Success []string      `json:"success,omitempty"`
-	RetCode int64         `json:"ret_code,omitempty"`
+	RetCode int           `json:"ret_code,omitempty"`
 	Message string        `json:"message,omitempty"`
 }
 

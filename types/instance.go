@@ -38,17 +38,17 @@ type DescribeInstancesRequest struct {
 type DescribeInstancesResponse struct {
 	Action      string        `json:"action"`
 	InstanceSet []InstanceSet `json:"instance_set"`
-	RetCode     int64         `json:"ret_code"`
-	TotalCount  int64         `json:"total_count"`
+	RetCode     int           `json:"ret_code"`
+	TotalCount  int           `json:"total_count"`
 }
 
 type InstanceSet struct {
 	Vxnets           []Vxnet  `json:"vxnets"`
-	MemoryCurrent    int64    `json:"memory_current"`
-	VcpusCurrent     int64    `json:"vcpus_current"`
+	MemoryCurrent    int      `json:"memory_current"`
+	VcpusCurrent     int      `json:"vcpus_current"`
 	Image            Image    `json:"image"`
 	InstanceName     string   `json:"instance_name"`
-	InstanceClass    int64    `json:"instance_class"`
+	InstanceClass    int      `json:"instance_class"`
 	Status           string   `json:"status"`
 	Description      string   `json:"description"`
 	ReservedContract string   `json:"reserved_contract"`
@@ -70,10 +70,10 @@ type Volume struct {
 
 type Vxnet struct {
 	Ipv6Address string `json:"ipv6_address"`
-	VxnetType   int64  `json:"vxnet_type"`
+	VxnetType   int    `json:"vxnet_type"`
 	VxnetID     string `json:"vxnet_id"`
 	VxnetName   string `json:"vxnet_name"`
-	Role        int64  `json:"role"`
+	Role        int    `json:"role"`
 	PrivateIP   string `json:"private_ip"`
 	NICID       string `json:"nic_id"`
 }
