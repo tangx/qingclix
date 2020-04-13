@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/types"
 )
@@ -29,9 +30,9 @@ type PresetConfig struct {
 	Configs map[string]ItemConfig `yaml:"configs,omitempty" json:"configs,omitempty"`
 }
 type ItemConfig struct {
-	Instance types.RunInstancesRequest  `yaml:"instance,omitempty" json:"instance,omitempty"`
-	Volume   types.CreateVolumesRequest `yaml:"volume,omitempty" json:"volume,omitempty"`
-	Contract types.CreateVolumesRequest `yaml:"contract,omitempty" json:"contract,omitempty"`
+	Instance types.RunInstancesRequest                       `yaml:"instance,omitempty" json:"instance,omitempty"`
+	Volume   types.CreateVolumesRequest                      `yaml:"volume,omitempty" json:"volume,omitempty"`
+	Contract types.ApplyReservedContractWithResourcesRequest `yaml:"contract,omitempty" json:"contract,omitempty"`
 }
 
 // launch 创建实例
@@ -39,6 +40,7 @@ func launch() {
 	presetMode()
 }
 
+// launchInstance 根据配置，购买服务器、磁盘及合约
 func launchInstance(itemConfig ItemConfig) {
 
 	// Inital a Client
@@ -118,4 +120,78 @@ func launchInstance(itemConfig ItemConfig) {
 	// 1. 创建 Contract
 	// 2. 付费 Contract
 	// 3. 绑定 服务器到 Contract
+
+	// instanceContract := contract
+	itemConfig.Contract.Zone = instance.Zone
+
+	// 付费服务器
+	instanceContract := itemConfig.Contract
+	instanceContract.Resources = runInstanceResp.Instances
+	ApplyLeaseAssociateContract(cli, instanceContract)
+	// 付费硬盘
+	volumeContract := itemConfig.Contract
+	volumeContract.Resources = createVolumeResp.Volumes
+	ApplyLeaseAssociateContract(cli, volumeContract)
+
+}
+
+// ApplyLeaseAssociateContract 根据目标资源申请购买、支付合约，并绑定到对应的资源上。
+func ApplyLeaseAssociateContract(cli types.Client, params types.ApplyReservedContractWithResourcesRequest) (ok bool) {
+
+	// 购买合约
+	fmt.Printf("购买 %s 的合约: .. ", params.Resources)
+	resp, err := cli.ApplyReservedContractWithResources(params)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	fmt.Println(resp.ContractID)
+
+	// 支付合约
+	fmt.Printf("支付合约: %s ..", resp.ContractID)
+	leaseParams := types.LeaseReservedContractRequest{
+		Contract: resp.ContractID,
+	}
+	leaseResp, err := cli.LeaseReservedContract(leaseParams)
+	if leaseResp.RetCode == 0 {
+		fmt.Println("..OK")
+	} else {
+		fmt.Errorf("%s\n", leaseResp.Message)
+	}
+
+	// 判断合约是否可用
+	fmt.Printf("判断合约状态 ...")
+	descParams := types.DescribeReservedContractsRequest{
+		ReservedContracts: []string{resp.ContractID},
+		Zone:              params.Zone,
+		Status:            []string{"active"},
+	}
+	for {
+		result, err := cli.DescribeReservedContracts(descParams)
+		if err != nil {
+			logrus.Infoln("err")
+		}
+
+		if result.TotalCount == len(descParams.ReservedContracts) {
+			fmt.Println("..OK ")
+			break
+		}
+		fmt.Printf(".")
+		time.Sleep(1 * time.Second)
+	}
+
+	// 判定合约到目标资源
+	fmt.Printf("绑定资源[%s] 到 合约[%s] ...", params.Resources, resp.ContractID)
+	assoParams := types.AssociateReservedContractRequest{
+		Contract:  resp.ContractID,
+		Resources: params.Resources,
+	}
+	_, err = cli.AssociateReservedContract(assoParams)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	fmt.Println("..OK")
+	return true
+
 }

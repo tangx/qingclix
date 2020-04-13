@@ -124,3 +124,20 @@ func Test_DescribeVolumes(t *testing.T) {
 
 	fmt.Println(resp)
 }
+
+func Test_DescribeReservedContracts(t *testing.T) {
+	cli := Client{}
+
+	params := DescribeReservedContractsRequest{
+		ReservedContracts: []string{"rc-ojC5FC7r"},
+		Zone:              "pek3d",
+		Status:            []string{"active", "pending"},
+	}
+
+	resp, err := cli.DescribeReservedContracts(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp)
+}
