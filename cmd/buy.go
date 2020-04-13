@@ -86,13 +86,17 @@ func presetMode() {
 	}
 	for {
 		resp, _ := cli.DescribeInstances(descInstanceParams)
-		if resp.TotalCount == 1 {
+		if resp.TotalCount == len(descInstanceParams.Instances) {
 			fmt.Println(".. OK")
 			break
 		}
 		time.Sleep(1 * time.Second)
 		fmt.Printf(".")
 	}
+
+	// 判断 volume 的状态是否为需求状态。
+	// ex:
+	// func IsReadyVolume(volume string,status string) (ok bool) {}
 
 	// 绑定 volume 到 instance
 	fmt.Printf("绑定 volume 到 instance....")
