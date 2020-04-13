@@ -48,18 +48,70 @@ func launch() {
 
 // presetMode 预设模式
 func presetMode() {
-
-	cli := types.Client{}
-
 	preset := LoadPresetConfig()
 	// instance := preset.Configs
 	// fmt.Println(preset)
-	choiceConfig := ChooseConfig(preset)
-	// contract := choiceConfig.Contract
+	item := ChooseConfig(preset)
+
+	launchInstance(item)
+
+}
+
+// LoadPresetConfig 读取预设配置
+func LoadPresetConfig() PresetConfig {
+	body, err := ioutil.ReadFile(global.ConfigFile)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// fmt.Printf("%s\n", body)
+
+	var preset PresetConfig
+	err = json.Unmarshal(body, &preset)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// fmt.Println(preset)
+
+	return preset
+}
+
+// ChooseConfig 选择预设配置
+func ChooseConfig(preset PresetConfig) ItemConfig {
+
+	var option []string
+	for k := range preset.Configs {
+		option = append(option, k)
+	}
+	// 结果排序，优化展示效果
+	sort.Strings(option)
+
+	// 选择
+	var qs = []*survey.Question{
+		{
+			Name: "choice",
+			Prompt: &survey.Select{
+				Message: "选择购买配置: ",
+				Options: option,
+			},
+		},
+	}
+	var choice string
+	err := survey.Ask(qs, &choice)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return preset.Configs[choice]
+}
+
+func launchInstance(itemConfig ItemConfig) {
+
+	// Inital a Client
+	cli := types.Client{}
 
 	// 创建 instance 实例
 	fmt.Printf("购买主机....")
-	instance := choiceConfig.Instance
+	instance := itemConfig.Instance
 	runInstanceResp, err := cli.RunInstances(instance)
 	if err != nil {
 		panic(err)
@@ -69,7 +121,7 @@ func presetMode() {
 
 	// 创建 volume 硬盘
 	fmt.Printf("购买硬盘....")
-	volume := choiceConfig.Volume
+	volume := itemConfig.Volume
 	volume.Zone = instance.Zone // 保证 volume 和 instance 在相同可用区
 	volume.VolumeName = instance.InstanceName
 	createVolumeResp, err := cli.CreateVolumes(volume)
@@ -131,51 +183,4 @@ func presetMode() {
 	// 1. 创建 Contract
 	// 2. 付费 Contract
 	// 3. 绑定 服务器到 Contract
-}
-
-// LoadPresetConfig 读取预设配置
-func LoadPresetConfig() PresetConfig {
-	body, err := ioutil.ReadFile(global.ConfigFile)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	// fmt.Printf("%s\n", body)
-
-	var preset PresetConfig
-	err = json.Unmarshal(body, &preset)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	// fmt.Println(preset)
-
-	return preset
-}
-
-// ChooseConfig 选择预设配置
-func ChooseConfig(preset PresetConfig) ItemConfig {
-
-	var option []string
-	for k := range preset.Configs {
-		option = append(option, k)
-	}
-	// 结果排序，优化展示效果
-	sort.Strings(option)
-
-	// 选择
-	var qs = []*survey.Question{
-		{
-			Name: "choice",
-			Prompt: &survey.Select{
-				Message: "选择购买配置: ",
-				Options: option,
-			},
-		},
-	}
-	var choice string
-	err := survey.Ask(qs, &choice)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return preset.Configs[choice]
 }
