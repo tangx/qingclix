@@ -1,7 +1,9 @@
 package types
 
 type DescribeJobsRequest struct {
-	Jobs    []string `yaml:"jobs,omitempty" json:"jobs,omitempty" url:"jobs,omitempty,dotnumbered,numbered1"`
+	Jobs []string `yaml:"jobs,omitempty" json:"jobs,omitempty" url:"jobs,omitempty,dotnumbered,numbered1"`
+	// Status 任务状态
+	// pending, working, failed, successful
 	Status  []string `yaml:"status,omitempty" json:"status,omitempty" url:"status,omitempty,dotnumbered,numbered1"`
 	Verbose int      `yaml:"verbose,omitempty" json:"verbose,omitempty" url:"verbose,omitempty"`
 	Offset  int      `yaml:"offset,omitempty" json:"offset,omitempty" url:"offset,omitempty"`
@@ -35,6 +37,6 @@ type JobSetResources struct {
 }
 
 func (cli *Client) DescribeJobs(params DescribeJobsRequest) (resp DescribeJobsResponse, err error) {
-	err = cli.Get("DescribeJobs", &resp)
+	err = cli.Get("DescribeJobs", params, &resp)
 	return
 }

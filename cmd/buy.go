@@ -64,7 +64,8 @@ func presetMode() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(runInstanceResp.Instances[0])
+	fmt.Println(runInstanceResp)
+	// fmt.Println(runInstanceResp.Instances)
 
 	// 创建 volume 硬盘
 	fmt.Printf("购买硬盘....")
@@ -75,10 +76,10 @@ func presetMode() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(createVolumeResp.Volumes)
+	fmt.Println(createVolumeResp)
 
 	// 判断服务器是否为可用状态
-	fmt.Printf("判断服务器是否为 running 状态 ..")
+	fmt.Printf("等待服务器是否为 running 状态 ..")
 	descInstanceParams := types.DescribeInstancesRequest{
 		Zone:      instance.Zone,
 		Instances: runInstanceResp.Instances,
@@ -97,7 +98,7 @@ func presetMode() {
 	// 判断 volume 的状态是否为需求状态。
 	// ex:
 	// func IsReadyVolume(volume string,status string) (ok bool) {}
-	fmt.Printf("判断磁盘是否为 available 状态 ..")
+	fmt.Printf("等待磁盘是否为 available 状态 ..")
 	descVolumeParams := types.DescribeVolumesRequest{
 		Zone:    instance.Zone,
 		Volumes: createVolumeResp.Volumes,
