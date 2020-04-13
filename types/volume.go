@@ -45,3 +45,26 @@ func (cli *Client) DetachVolumes(params DetachVolumesRequest) (resp DetachVolume
 	err = cli.Get("DetachVolumes", params, &resp)
 	return
 }
+
+type DescribeVolumesRequest struct {
+	Volumes    []string `yaml:"volumes,omitempty" json:"volumes,omitempty" url:"volumes,omitempty"`
+	VolumeType int      `yaml:"volume_type,omitempty" json:"volume_type,omitempty" url:"volume_type,omitempty"`
+	Status     []string `yaml:"status,omitempty" json:"status,omitempty" url:"status,omitempty"`
+	SearchWord string   `yaml:"search_word,omitempty" json:"search_word,omitempty" url:"search_word,omitempty"`
+	Tags       []string `yaml:"tags,omitempty" json:"tags,omitempty" url:"tags,omitempty"`
+	Verbose    int      `yaml:"verbose,omitempty" json:"verbose,omitempty" url:"verbose,omitempty"`
+	Offset     int      `yaml:"offset,omitempty" json:"offset,omitempty" url:"offset,omitempty"`
+	Limit      int      `yaml:"limit,omitempty" json:"limit,omitempty" url:"limit,omitempty"`
+	Zone       string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
+}
+type DescribeVolumesResponse struct {
+	Action     string        `json:"action,omitempty"`
+	TotalCount int64         `json:"total_count,omitempty"`
+	VolumeSet  []interface{} `json:"volume_set,omitempty"`
+	RetCode    int64         `json:"ret_code,omitempty"`
+}
+
+func (cli *Client) DescribeVolumes(params DescribeVolumesRequest) (resp DescribeVolumesResponse, err error) {
+	err = cli.Get("DescribeVolumes", params, &resp)
+	return
+}
