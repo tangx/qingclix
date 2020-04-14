@@ -1,9 +1,11 @@
 package global
 
-// Config Const
-const (
-	ConfigFile = "/Users/tangxin/.qingclix/config.json"
-	AuthFile   = "/Users/tangxin/.qingcloud/config.yaml"
+import "github.com/tangx/qingclix/utils"
+
+var (
+	HomeDir    string = utils.HomeDir()
+	AuthFile   string = HomeDir + "/.qingcloud/config.yaml"
+	ConfigFile string = HomeDir + "/.qingclix/config.json"
 )
 
 // Global Flags Vars
