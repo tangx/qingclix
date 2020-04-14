@@ -121,6 +121,8 @@ github.com/tangx/go-querystring v1.0.1 h1:t6yJPu7eAgpcCC40Tm0xmz+Zsh5gVPbxfIudQf
 github.com/tangx/go-querystring v1.0.1/go.mod h1:/E/dULAT8XL8IcD+oh5TBkA25sA52MBCAlfgvDvRrcs=
 github.com/tangx/qingyun-sdk-go v1.0.4 h1:xCoiNkbyY0ainEPgKVccg+4xX0zcFNS1bYGrMZgIQDY=
 github.com/tangx/qingyun-sdk-go v1.0.4/go.mod h1:bJPxVwpFgNeBqaIAeSMVABVKHAY2VxsUfmOeMsIkHjA=
+github.com/tangx/qingyun-sdk-go v1.0.5 h1:sGgtwJviruN6xBhG2NPqgerJenbSQowWvQleV/nw3hc=
+github.com/tangx/qingyun-sdk-go v1.0.5/go.mod h1:+GjFom8djOBhe1Hagds8jI0eDidUhuQJ8W9o5ECq7aQ=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=

@@ -8,7 +8,7 @@ type RunInstancesRequest struct {
 	InstanceType  string   `yaml:"instance_type,omitempty" json:"instance_type,omitempty" url:"instance_type,omitempty"`
 	OsDiskSize    string   `yaml:"os_disk_size,omitempty" json:"os_disk_size,omitempty" url:"os_disk_size,omitempty"`
 	LoginMode     string   `yaml:"login_mode,omitempty" json:"login_mode,omitempty" url:"login_mode,omitempty"`
-	LoginKeypair  string   `yaml:"login_keypair,omitempty" json:"login_keypair,omitempty" url:"login_keypair,omitempty"`
+	LoginKeypair  string   `yaml:"login_keypair,omitempty" json:"login_keypair,omitempty" url:"login_keypair,omitempty,dotnumbered,numbered1"`
 	InstanceName  string   `yaml:"instance_name,omitempty" json:"instance_name,omitempty" url:"instance_name,omitempty"`
 	Zone          string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 	Vxnets        []string `yaml:"vxnets,omitempty" json:"vxnets,omitempty" url:"vxnets,omitempty,dotnumbered,numbered1"`
@@ -34,6 +34,7 @@ type DescribeInstancesRequest struct {
 	InstanceClass int      `yaml:"instance_class,omitempty" json:"instance_class,omitempty" url:"instance_class,omitempty"`
 	Status        []string `yaml:"status,omitempty" json:"status,omitempty" url:"status,omitempty,dotnumbered,numbered1"`
 	Zone          string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
+	Verbose       int      `yaml:"verbose,omitempty" json:"verbose,omitempty" url:"verbose,omitempty"`
 }
 
 type DescribeInstancesResponse struct {
@@ -44,20 +45,21 @@ type DescribeInstancesResponse struct {
 }
 
 type InstanceSet struct {
-	Vxnets           []Vxnet  `json:"vxnets"`
-	MemoryCurrent    int      `json:"memory_current"`
-	VcpusCurrent     int      `json:"vcpus_current"`
-	Image            Image    `json:"image"`
-	InstanceName     string   `json:"instance_name"`
-	InstanceClass    int      `json:"instance_class"`
-	Status           string   `json:"status"`
-	Description      string   `json:"description"`
-	ReservedContract string   `json:"reserved_contract"`
-	VolumeIDS        []string `json:"volume_ids"`
-	ZoneID           string   `json:"zone_id"`
-	InstanceID       string   `json:"instance_id"`
-	InstanceType     string   `json:"instance_type"`
-	Volumes          []Volume `json:"volumes"`
+	Vxnets           []Vxnet  `json:"vxnets,omitempty"`
+	MemoryCurrent    int      `json:"memory_current,omitempty"`
+	VcpusCurrent     int      `json:"vcpus_current,omitempty"`
+	Image            Image    `json:"image,omitempty"`
+	InstanceName     string   `json:"instance_name,omitempty"`
+	InstanceClass    int      `json:"instance_class,omitempty"`
+	Status           string   `json:"status,omitempty"`
+	Description      string   `json:"description,omitempty"`
+	ReservedContract string   `json:"reserved_contract,omitempty"`
+	VolumeIDS        []string `json:"volume_ids,omitempty"`
+	ZoneID           string   `json:"zone_id,omitempty"`
+	InstanceID       string   `json:"instance_id,omitempty"`
+	InstanceType     string   `json:"instance_type,omitempty"`
+	Volumes          []Volume `json:"volumes,omitempty"`
+	KeypairIDS       []string `json:"keypair_ids,omitempty"`
 }
 
 type Image struct {

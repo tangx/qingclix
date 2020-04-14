@@ -57,8 +57,8 @@ func launch() {
 	switch mode {
 	case "preset":
 		presetMode()
-	// case "clone":
-	// 	cloneMode()
+	case "clone":
+		cloneMode()
 	// case "interactive":
 	// 	interactiveMode()
 	default:
