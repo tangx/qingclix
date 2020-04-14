@@ -61,6 +61,7 @@ func configureMain() {
 		configureClone(configure_clone_target)
 		return
 	}
+
 }
 func configureClone(instance string) {
 	cli := types.Client{}
