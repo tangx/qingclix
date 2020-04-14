@@ -28,19 +28,29 @@ var buyCmd = &cobra.Command{
 // Flags 变量
 var (
 	// 执行模式
-	mode string
+	mode     string
+	instance string
+	// 保存配置
+	dump string
 )
 
 const (
-	ModeDesc = `服务器购买模式
+	ModeDescription = `服务器购买模式
 clone: 克隆一台已有机器
 interactive: 交互提示购买
 preset: 预设值模式, 从 ~/.qingclix/config.json 中读取预设文件`
+
+	DumpDescription = `保存 clone 目标的配置，而非克隆购买
+--dump clone :  使用 ${instance_name}_clone 作为配置 label 字段。
+--dump name :  使用 name 作为预设配置 label 字段, 且使用 name 作为实例名称。
+`
 )
 
 func init() {
 	rootCmd.AddCommand(buyCmd)
-	buyCmd.Flags().StringVarP(&mode, "mode", "m", "preset", ModeDesc)
+	buyCmd.Flags().StringVarP(&mode, "mode", "m", "preset", ModeDescription)
+	buyCmd.Flags().StringVarP(&instance, "instance", "i", "", "指定克隆的源主机")
+	buyCmd.Flags().StringVarP(&dump, "dump", "", "", DumpDescription)
 }
 
 type PresetConfig struct {

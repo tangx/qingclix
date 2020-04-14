@@ -1,13 +1,9 @@
 package cmd
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"sort"
 
-	"github.com/sirupsen/logrus"
-	"github.com/tangx/qingclix/global"
 	"gopkg.in/AlecAivazis/survey.v1"
 )
 
@@ -20,26 +16,6 @@ func presetMode() {
 
 	LaunchInstance(item)
 
-}
-
-// LoadPresetConfig 读取预设配置
-func LoadPresetConfig() PresetConfig {
-	body, err := ioutil.ReadFile(global.ConfigFile)
-	logrus.Debugf("%s", body)
-
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	// fmt.Printf("%s\n", body)
-
-	var preset PresetConfig
-	err = json.Unmarshal(body, &preset)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	// fmt.Println(preset)
-
-	return preset
 }
 
 // ChooseConfig 选择预设配置

@@ -3,6 +3,7 @@ package cmd
 import (
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/tangx/qingclix/types"
 )
 
@@ -20,4 +21,19 @@ func Test_ApplyLeaseAssociation(t *testing.T) {
 
 func Test_LoadConfig(t *testing.T) {
 	LoadPresetConfig()
+}
+
+func Test_cloneMode(t *testing.T) {
+	// DebugLevelMode()
+	cloneMode()
+}
+
+func DebugLevelMode() {
+
+	verbose := 8
+	logLevel := logrus.Level(verbose)
+
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetLevel(logLevel)
+
 }

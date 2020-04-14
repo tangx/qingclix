@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func DebugLevel() {
+func DebugLevelMode() {
 
 	verbose := 8
 	logLevel := logrus.Level(verbose)
@@ -100,7 +100,7 @@ func Test_DetachVolume(t *testing.T) {
 }
 
 func Test_DescribeInstances(t *testing.T) {
-	DebugLevel()
+	DebugLevelMode()
 
 	cli := Client{}
 	instance := "i-j33tcu6f"
@@ -155,17 +155,15 @@ func Test_DescribeReservedContracts(t *testing.T) {
 	fmt.Println(resp)
 }
 
-// func Test_GetResourceInfo(t *testing.T) {
-// 	verbose := 8
-// 	logLevel := logrus.Level(verbose)
+func Test_DescribeContracts(t *testing.T) {
 
-// 	logrus.SetFormatter(&logrus.JSONFormatter{})
-// 	logrus.SetLevel(logLevel)
+	DebugLevelMode()
 
-// 	cli := Client{}
-// 	params := GetResourceInfoRequest{
-// 		Resources: []string{"i-tb9vdyte"},
-// 		Zone:      "pek3d",
-// 	}
-// 	cli.GetResourceInfo(params)
-// }
+	cli := Client{}
+
+	contract := "rc-dZvDRLcW"
+	params := DescribeReservedContractsRequest{
+		ReservedContracts: []string{contract},
+	}
+	cli.DescribeReservedContracts(params)
+}

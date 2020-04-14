@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -36,4 +38,36 @@ func Execute() {
 func SetLogLevel(level int) {
 	logLevel := logrus.Level(level)
 	logrus.SetLevel(logLevel)
+}
+
+// LoadPresetConfig 读取预设配置
+func LoadPresetConfig() PresetConfig {
+	body, err := ioutil.ReadFile(global.ConfigFile)
+	logrus.Debugf("%s", body)
+
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// fmt.Printf("%s\n", body)
+
+	var preset PresetConfig
+	err = json.Unmarshal(body, &preset)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// fmt.Println(preset)
+
+	return preset
+}
+
+// 保存配置文件
+func DumpPresetConfig(preset PresetConfig) {
+	data, err := json.MarshalIndent(preset, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(global.ConfigFile, data, 0644)
+	if err != nil {
+		logrus.Errorln(err)
+	}
 }

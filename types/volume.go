@@ -58,10 +58,21 @@ type DescribeVolumesRequest struct {
 	Zone       string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 }
 type DescribeVolumesResponse struct {
-	Action     string        `json:"action,omitempty"`
-	TotalCount int           `json:"total_count,omitempty"`
-	VolumeSet  []interface{} `json:"volume_set,omitempty"`
-	RetCode    int           `json:"ret_code,omitempty"`
+	Action            string              `json:"action,omitempty"`
+	TotalCount        int                 `json:"total_count,omitempty"`
+	DescribeVolumeSet []DescribeVolumeSet `json:"volume_set,omitempty"`
+	RetCode           int                 `json:"ret_code,omitempty"`
+}
+
+type DescribeVolumeSet struct {
+	Size             int    `json:"size,omitempty"`
+	Encryption       int    `json:"encryption,omitempty"`
+	Repl             string `json:"repl,omitempty"`
+	ReservedContract string `json:"reserved_contract,omitempty"`
+	VolumeID         string `json:"volume_id,omitempty"`
+	ZoneID           string `json:"zone_id,omitempty"`
+	VolumeType       int    `json:"volume_type,omitempty"`
+	VolumeName       string `json:"volume_name,omitempty"`
 }
 
 func (cli *Client) DescribeVolumes(params DescribeVolumesRequest) (resp DescribeVolumesResponse, err error) {
