@@ -40,5 +40,4 @@ jobs:
         prerelease: false
         files: |
           docs/config.json
-          LICENSE.txt
           bin/*

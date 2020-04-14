@@ -15,6 +15,10 @@
 ```bash
 $ qingclix help  
 
+青云控制台的操作常用操作复杂，
+  例如，新购机器、更换操作系统 等
+  实现目标根据预设参数或配置，快速实现日常操作
+
 Usage:
   qingclix [flags]
   qingclix [command]
@@ -24,7 +28,10 @@ Available Commands:
   help        Help about any command
 
 Flags:
-  -h, --help   help for qingclix
+  -c, --count int       设置购买数量 (default 1)
+  -h, --help            help for qingclix
+      --skip_contract   强制跳过合约购买过程。 true: 跳过
+  -v, --verbose int     logrus 日志等级。 0: Panic, 4: Info, 6: Trace.  (default 4)
 
 Use "qingclix [command] --help" for more information about a command.
 ```
@@ -35,6 +42,8 @@ Use "qingclix [command] --help" for more information about a command.
 + [x] 预设值服务器购买
 + [x] 预设值硬盘购买与绑定
 + [x] 预设值服务器、硬盘合约购买与绑定
++ [x] 支持强制跳过合约购买
++ [x] 支持批量购买
 
 **自定义购买**
 + [ ] 获取与保存网络、用户密钥等信息
