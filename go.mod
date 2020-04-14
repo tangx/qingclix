@@ -3,7 +3,6 @@ module github.com/tangx/qingclix
 go 1.14
 
 require (
-	github.com/docker/go v1.5.1-1
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v1.0.0
 	github.com/tangx/go-querystring v1.0.1
