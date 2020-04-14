@@ -12,22 +12,22 @@ func cloneMode() {
 
 }
 
-// func clone(cli types.Client, instance string) (config ItemConfig, err error) {
+func clone(cli types.Client, instance string) (config ItemConfig, err error) {
 
-// 	insParams, volumes, contract := cloneInstance(cli, instance)
+	// insParams, volumes, contract := cloneInstance(cli, instance)
 
-// 	// clone instance
-// 	config.Instance = insParams
+	// // clone instance
+	// config.Instance = insParams
 
-// 	// clone volumes
-// 	for _, volume := range volumes {
-// 		volParams := cloneVolume(cli, volume)
-// 		config.Volume = append(config.Volume, volParams)
-// 	}
+	// // clone volumes
+	// for _, volume := range volumes {
+	// 	volParams := cloneVolume(cli, volume)
+	// 	config.Volumes = append()
+	// }
 
-// 	return
+	return
+}
 
-// }
 func cloneInstance(cli types.Client, instance string) (params types.RunInstancesRequest, volumes []string, contract string) {
 	descParams := types.DescribeInstancesRequest{
 		Instances: []string{instance},

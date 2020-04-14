@@ -17,3 +17,7 @@ func Test_ApplyLeaseAssociation(t *testing.T) {
 	payResources(cli, volumes, params)
 
 }
+
+func Test_LoadConfig(t *testing.T) {
+	LoadPresetConfig()
+}

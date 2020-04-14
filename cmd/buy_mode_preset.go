@@ -25,6 +25,8 @@ func presetMode() {
 // LoadPresetConfig 读取预设配置
 func LoadPresetConfig() PresetConfig {
 	body, err := ioutil.ReadFile(global.ConfigFile)
+	logrus.Debugf("%s", body)
+
 	if err != nil {
 		logrus.Fatal(err)
 	}

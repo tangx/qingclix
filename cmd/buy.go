@@ -48,7 +48,7 @@ type PresetConfig struct {
 }
 type ItemConfig struct {
 	Instance types.RunInstancesRequest                       `yaml:"instance,omitempty" json:"instance,omitempty"`
-	Volume   types.CreateVolumesRequest                      `yaml:"volume,omitempty" json:"volume,omitempty"`
+	Volumes  []types.CreateVolumesRequest                    `yaml:"volumes,omitempty" json:"volumes,omitempty"`
 	Contract types.ApplyReservedContractWithResourcesRequest `yaml:"contract,omitempty" json:"contract,omitempty"`
 }
 
@@ -86,14 +86,25 @@ func launchInstance(cli types.Client, config ItemConfig) {
 	instances := buyInstance(cli, instanceConfig)
 
 	// 购买磁盘
-	volumeConfig := config.Volume
-	volumeConfig.Zone = instanceConfig.Zone // 保证 volume 和 instance 在相同可用区
-	volumeConfig.VolumeName = instanceConfig.InstanceName
-	volumes := buyVolumeForInstance(cli, instances[0], volumeConfig)
-	// 绑定磁盘到主机
-	attachResult := attachVolumeToInstance(cli, instances[0], volumes, instanceConfig.Zone)
-	if attachResult {
-		logrus.Infof("attach Volimes(%s) to Instance(%s): %t", volumes, instances[0], attachResult)
+
+	// 定义磁盘集合 如果一台机器有多块磁盘
+	var volumesSet [][]string
+
+	for _, config := range config.Volumes {
+		logrus.Debugln(config)
+
+		config.Zone = instanceConfig.Zone // 保证 volume 和 instance 在相同可用区
+		if config.VolumeName == "" {
+			config.VolumeName = instanceConfig.InstanceName
+		}
+		volumes := buyVolumeForInstance(cli, instances[0], config)
+		// 绑定磁盘到主机
+		attachResult := attachVolumeToInstance(cli, instances[0], volumes, instanceConfig.Zone)
+		if attachResult {
+			logrus.Infof("attach Volimes(%s) to Instance(%s): %t", volumes, instances[0], attachResult)
+		}
+
+		volumesSet = append(volumesSet, volumes)
 	}
 
 	// 资源付费
@@ -102,7 +113,9 @@ func launchInstance(cli types.Client, config ItemConfig) {
 	// 付费服务器
 	payResources(cli, instances, contractConfig)
 	// 付费硬盘
-	payResources(cli, volumes, contractConfig)
+	for _, volumes := range volumesSet {
+		payResources(cli, volumes, contractConfig)
+	}
 
 	fmt.Println("")
 }
