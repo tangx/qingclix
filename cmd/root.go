@@ -22,10 +22,9 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	// rootCmd.Flags()(&mode, "mode", "m", "preset", ModeDesc)
-	rootCmd.PersistentFlags().IntVarP(&global.Verbose, "verbose", "v", 4, "logrus 日志等级. 0: Panic, 4: Info, 6: Trace. ")
-	rootCmd.PersistentFlags().BoolVarP(&global.SkipContract, "skip_contract", "", false, "true: 强制跳过合约购买过程; false 保持当前状态。")
-
+	rootCmd.PersistentFlags().IntVarP(&global.Verbose, "verbose", "v", 4, "logrus 日志等级。 0: Panic, 4: Info, 6: Trace. ")
+	rootCmd.PersistentFlags().BoolVarP(&global.SkipContract, "skip_contract", "", false, "强制跳过合约购买过程。 true: 跳过")
+	rootCmd.PersistentFlags().IntVarP(&global.Count, "count", "c", 1, "设置购买数量")
 }
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {

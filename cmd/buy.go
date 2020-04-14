@@ -67,11 +67,19 @@ func launch() {
 
 }
 
-// launchInstance 根据配置，购买服务器、磁盘及合约
-func launchInstance(config ItemConfig) {
+// LaunchInstance 根据配置，购买服务器、磁盘及合约, 外层调用
+func LaunchInstance(config ItemConfig) {
 
 	// Inital a Client
 	cli := types.Client{}
+
+	for i := 1; i <= global.Count; i++ {
+		launchInstance(cli, config)
+	}
+}
+
+// launchInstance 根据配置，购买服务器、磁盘及合约
+func launchInstance(cli types.Client, config ItemConfig) {
 
 	// 购买主机
 	instanceConfig := config.Instance
@@ -92,16 +100,16 @@ func launchInstance(config ItemConfig) {
 	contractConfig := config.Contract
 	contractConfig.Zone = instanceConfig.Zone
 	// 付费服务器
-	applyLeaseAssociateContract(cli, instances, contractConfig)
+	payResources(cli, instances, contractConfig)
 	// 付费硬盘
-	applyLeaseAssociateContract(cli, volumes, contractConfig)
+	payResources(cli, volumes, contractConfig)
 
+	fmt.Println("")
 }
 
 // applyLeaseAssociateContract 根据目标资源申请购买、支付合约，并绑定到对应的资源上。
-func applyLeaseAssociateContract(cli types.Client, resources []string, params types.ApplyReservedContractWithResourcesRequest) (ok bool) {
+func payResources(cli types.Client, resources []string, params types.ApplyReservedContractWithResourcesRequest) (ok bool) {
 
-	fmt.Println(resources)
 	if global.SkipContract {
 		logrus.Infof("强制跳过 %s 合约过程", resources)
 		return false
@@ -197,9 +205,9 @@ func buyVolumeForInstance(cli types.Client, instance string, volume types.Create
 }
 
 // payResources 对传入资源创建预留合约，并付费
-func payResources(resources []string, months int, auto_renew int) (ok bool) {
-	return
-}
+// func payResources(resources []string, months int, auto_renew int) (ok bool) {
+// 	return
+// }
 
 // attachVolumeToInstance 挂载磁盘到主机
 func attachVolumeToInstance(cli types.Client, instance string, volumes []string, zone string) (ok bool) {

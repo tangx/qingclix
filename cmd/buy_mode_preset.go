@@ -18,7 +18,7 @@ func presetMode() {
 	// fmt.Println(preset)
 	item := ChooseConfig(preset)
 
-	launchInstance(item)
+	LaunchInstance(item)
 
 }
 

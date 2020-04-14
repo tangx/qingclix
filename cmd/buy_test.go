@@ -14,6 +14,6 @@ func Test_ApplyLeaseAssociation(t *testing.T) {
 		Months:    1,
 	}
 	cli := types.Client{}
-	applyLeaseAssociateContract(cli, volumes, params)
+	payResources(cli, volumes, params)
 
 }
