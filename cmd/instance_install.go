@@ -2,55 +2,41 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"sort"
 	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/types"
+	"gopkg.in/AlecAivazis/survey.v1"
 )
 
-// buyCmd represents the buy command
-var buyCmd = &cobra.Command{
-	Use:   "buy",
+// installCmd represents the buy command
+var installCmd = &cobra.Command{
+	Use:   "install",
 	Short: "根据预设信息购买机器",
 	Long: `根据预设信息购买机器
-  1. 根据 ~/.qingclix/preinstall.json 预设信息，直接选择购买对应的机器
+  1. 根据 ~/.qingclix/config.json 预设信息，直接选择购买对应的机器
   2. 使用 -i 进入交互界面，选择自定购买参数`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// logrus.SetLevel(logrus.TraceLevel)
 		SetLogLevel(global.Verbose)
 
-		launch()
+		instanceInstallMain()
 	},
 }
-
-// Flags 变量
-var (
-	// 执行模式
-	mode     string
-	instance string
-	// 保存配置
-	dump string
-)
 
 const (
 	ModeDescription = `服务器购买模式
 clone: 克隆一台已有机器
 interactive: 交互提示购买
 preset: 预设值模式, 从 ~/.qingclix/config.json 中读取预设文件`
-
-	DumpDescription = `保存 clone 目标的配置，而非克隆购买
---dump clone :  使用 ${instance_name}_clone 作为配置 label 字段。
---dump name :  使用 name 作为预设配置 label 字段, 且使用 name 作为实例名称。
-`
 )
 
 func init() {
-	rootCmd.AddCommand(buyCmd)
-	buyCmd.Flags().StringVarP(&mode, "mode", "m", "preset", ModeDescription)
-	buyCmd.Flags().StringVarP(&instance, "instance", "i", "", "指定克隆的源主机")
-	buyCmd.Flags().StringVarP(&dump, "dump", "", "", DumpDescription)
+	instanceCmd.AddCommand(installCmd)
 }
 
 type PresetConfig struct {
@@ -63,18 +49,41 @@ type ItemConfig struct {
 }
 
 // launch 创建实例
-func launch() {
-	switch mode {
-	case "preset":
-		presetMode()
-	case "clone":
-		cloneMode()
-	// case "interactive":
-	// 	interactiveMode()
-	default:
-		presetMode()
+func instanceInstallMain() {
+
+	preset := LoadPresetConfig()
+	item := ChooseConfig(preset)
+
+	LaunchInstance(item)
+}
+
+// ChooseConfig 选择预设配置
+func ChooseConfig(preset PresetConfig) ItemConfig {
+
+	var option []string
+	for k := range preset.Configs {
+		option = append(option, k)
+	}
+	// 结果排序，优化展示效果
+	sort.Strings(option)
+
+	// 选择
+	var qs = []*survey.Question{
+		{
+			Name: "choice",
+			Prompt: &survey.Select{
+				Message: "选择购买配置: ",
+				Options: option,
+			},
+		},
+	}
+	var choice string
+	err := survey.Ask(qs, &choice)
+	if err != nil {
+		log.Fatal(err)
 	}
 
+	return preset.Configs[choice]
 }
 
 // LaunchInstance 根据配置，购买服务器、磁盘及合约, 外层调用

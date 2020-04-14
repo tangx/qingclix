@@ -1,3 +1,17 @@
+// Copyright © 2020 NAME HERE <EMAIL ADDRESS>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package cmd
 
 import (
@@ -5,32 +19,65 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/types"
 )
 
-func cloneMode() {
+// configureCmd represents the configure command
+var configureCmd = &cobra.Command{
+	Use:   "configure",
+	Short: "对预设服务器配置进行管理",
+	Long: `配置管理
+clone: clone 指定服务器的配置
+interactive: 交互式创建配置
+delete: 删除配置
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		configureMain()
+	},
+}
+
+var (
+	configure_clone_target string
+	configure_interactive  bool
+	configure_label        string
+)
+
+func init() {
+	instanceCmd.AddCommand(configureCmd)
+
+	configureCmd.Flags().StringVarP(&configure_clone_target, "clone", "", "", "克隆配置")
+	configureCmd.Flags().StringVarP(&configure_label, "label", "l", "", "使用自定义label替代默认生成规则")
+	configureCmd.Flags().BoolVarP(&configure_interactive, "interactive", "i", false, "交互问答生成配置")
+}
+
+func configureMain() {
+	if configure_interactive {
+
+		return
+	}
+
+	if configure_clone_target != "" {
+		configureClone(configure_clone_target)
+		return
+	}
+}
+func configureClone(instance string) {
 	cli := types.Client{}
 
 	if instance == "" {
 		logrus.Errorln("没有指定克隆的目标机")
 	}
 
-	item, err := clone(cli, instance)
+	item, err := cloneConfig(cli, instance)
 	if err != nil {
-		panic(err)
+		logrus.Errorln(err)
 	}
 
-	// 直接购买
-	if dump == "" {
-		LaunchInstance(item)
+	if configure_label == "" {
+		configure_label = item.Instance.InstanceName + "_clone"
 	}
-
-	// clone 配置
-	if dump == "clone" {
-		dump = item.Instance.InstanceName
-	}
-	item.Instance.InstanceName = dump
-	dumpConfig(dump, item)
+	dumpConfig(configure_label, item)
 
 }
 
@@ -41,7 +88,7 @@ func dumpConfig(name string, item ItemConfig) {
 	DumpPresetConfig(presetConfig)
 }
 
-func clone(cli types.Client, instance string) (config ItemConfig, err error) {
+func cloneConfig(cli types.Client, instance string) (config ItemConfig, err error) {
 
 	insParams, volumes, contract := cloneInstance(cli, instance)
 
