@@ -17,6 +17,7 @@ var buyCmd = &cobra.Command{
   1. 根据 ~/.qingclix/preinstall.json 预设信息，直接选择购买对应的机器
   2. 使用 -i 进入交互界面，选择自定购买参数`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// logrus.SetLevel(logrus.TraceLevel)
 		launch()
 	},
 }
@@ -69,93 +70,39 @@ func launchInstance(config ItemConfig) {
 	// Inital a Client
 	cli := types.Client{}
 
-	instance := config.Instance
+	instanceConfig := config.Instance
 
-	volume := config.Volume
+	volumeConfig := config.Volume
 
-	contract := config.Contract
-	contract.Zone = instance.Zone
+	volumeConfig.Zone = instanceConfig.Zone // 保证 volume 和 instance 在相同可用区
+	volumeConfig.VolumeName = instanceConfig.InstanceName
 
-	// 创建 instance 实例
-	fmt.Printf("购买主机....")
-	runInstanceResp, err := cli.RunInstances(instance)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(runInstanceResp)
+	contractConfig := config.Contract
+	contractConfig.Zone = instanceConfig.Zone
 
-	// 判断服务器是否为可用状态
-	fmt.Printf("等待服务器是否为 running 状态 ..")
-	descInstanceParams := types.DescribeInstancesRequest{
-		Zone:      instance.Zone,
-		Instances: runInstanceResp.Instances,
-		Status:    []string{"running"},
+	// 购买主机
+	instances := buyInstance(cli, instanceConfig)
+	// 购买磁盘
+	volumes := buyVolumeForInstance(cli, instances[0], volumeConfig)
+	// 绑定磁盘到主机
+	attachResult := attachVolumeToInstance(cli, instances[0], volumes, instanceConfig.Zone)
+	if attachResult {
+		logrus.Infof("attach Volimes(%s) to Instance(%s): %t", volumes, instances[0], attachResult)
 	}
-	for {
-		resp, _ := cli.DescribeInstances(descInstanceParams)
-		if resp.TotalCount == len(descInstanceParams.Instances) {
-			fmt.Println(".. OK")
-			break
-		}
-		time.Sleep(1 * time.Second)
-		fmt.Printf(".")
-	}
-
-	// 创建 volume 硬盘
-	fmt.Printf("购买硬盘....")
-	volume.Zone = instance.Zone // 保证 volume 和 instance 在相同可用区
-	volume.VolumeName = instance.InstanceName
-	createVolumeResp, err := cli.CreateVolumes(volume)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(createVolumeResp)
-
-	// 判断 volume 的状态是否为需求状态。
-	// ex:
-	// func IsReadyVolume(volume string,status string) (ok bool) {}
-	fmt.Printf("等待磁盘是否为 available 状态 ..")
-	descVolumeParams := types.DescribeVolumesRequest{
-		Zone:    instance.Zone,
-		Volumes: createVolumeResp.Volumes,
-		Status:  []string{"available"},
-	}
-	for {
-		resp, _ := cli.DescribeVolumes(descVolumeParams)
-		if resp.TotalCount == len(descVolumeParams.Volumes) {
-			fmt.Println(".. OK")
-			break
-		}
-		time.Sleep(1 * time.Second)
-		fmt.Printf(".")
-	}
-
-	// 绑定 volume 到 instance
-	fmt.Printf("绑定 volume 到 instance....")
-	attachVolParams := types.AttachVolumesRequest{
-		Volumes:  createVolumeResp.Volumes,
-		Instance: runInstanceResp.Instances[0],
-		Zone:     volume.Zone,
-	}
-	attachVolumeResp, err := cli.AttachVolumes(attachVolParams)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(attachVolumeResp)
 
 	// todo: 根据服务器配置
 	// 1. 创建 Contract
 	// 2. 付费 Contract
 	// 3. 绑定 服务器到 Contract
 
-	// 付费服务器
-	instanceContract := contract
-	instanceContract.Resources = runInstanceResp.Instances
-	ApplyLeaseAssociateContract(cli, instanceContract)
-	// 付费硬盘
-	volumeContract := contract
-	volumeContract.Resources = createVolumeResp.Volumes
-	ApplyLeaseAssociateContract(cli, volumeContract)
+	// // 付费服务器
+	// instanceContract := contractConfig
+	// instanceContract.Resources = instances
+	// ApplyLeaseAssociateContract(cli, instanceContract)
+	// // 付费硬盘
+	// volumeContract := contractConfig
+	// volumeContract.Resources = volumes
+	// ApplyLeaseAssociateContract(cli, volumeContract)
 
 }
 
@@ -221,17 +168,90 @@ func ApplyLeaseAssociateContract(cli types.Client, params types.ApplyReservedCon
 }
 
 // buyInstance 购买主机实例
-func buyInstance(instance types.RunInstancesRequest) (instances []string) {
-	return
+func buyInstance(cli types.Client, instance types.RunInstancesRequest) (instances []string) {
+
+	// 创建 instance 实例
+	fmt.Printf("购买主机....")
+	runResp, err := cli.RunInstances(instance)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(runResp)
+
+	return runResp.Instances
 }
 
 // buyVolumeForInstance 为主机购买硬盘
 // 注意 可用区 与 磁盘类型 匹配
-func buyVolumeForInstance(instance string, volume_size int) (volumes []string) {
-	return
+func buyVolumeForInstance(cli types.Client, instance string, volume types.CreateVolumesRequest) (volumes []string) {
+
+	// 创建 volume 硬盘
+	fmt.Printf("购买硬盘....")
+	createResp, err := cli.CreateVolumes(volume)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(createResp)
+
+	return createResp.Volumes
 }
 
 // payResources 对传入资源创建预留合约，并付费
 func payResources(resources []string, months int, auto_renew int) (ok bool) {
 	return
+}
+
+// attachVolumeToInstance 挂载磁盘到主机
+func attachVolumeToInstance(cli types.Client, instance string, volumes []string, zone string) (ok bool) {
+
+	// 判断服务器是否为可用状态
+	fmt.Printf("等待服务器是否为 running 状态 ..")
+	descInstanceParams := types.DescribeInstancesRequest{
+		Instances: []string{instance},
+		Status:    []string{"running"},
+		Zone:      zone,
+	}
+	for {
+		resp, _ := cli.DescribeInstances(descInstanceParams)
+		if resp.TotalCount == len(descInstanceParams.Instances) {
+			fmt.Println(".. OK")
+			break
+		}
+		time.Sleep(1 * time.Second)
+		fmt.Printf(".")
+	}
+
+	// 判断 volume 的状态是否为需求状态。
+	// ex:
+	// func IsReadyVolume(volume string,status string) (ok bool) {}
+	fmt.Printf("等待磁盘是否为 available 状态 ..")
+	descParams := types.DescribeVolumesRequest{
+		Volumes: volumes,
+		Status:  []string{"available"},
+		Zone:    zone,
+	}
+	for {
+		resp, _ := cli.DescribeVolumes(descParams)
+		if resp.TotalCount == len(descParams.Volumes) {
+			fmt.Println(".. OK")
+			break
+		}
+		time.Sleep(1 * time.Second)
+		fmt.Printf(".")
+	}
+
+	// 绑定 volume 到 instance
+	fmt.Printf("绑定 volume 到 instance....")
+	attachVolParams := types.AttachVolumesRequest{
+		Volumes:  volumes,
+		Instance: instance,
+		Zone:     zone,
+	}
+	attachVolumeResp, err := cli.AttachVolumes(attachVolParams)
+	if err != nil {
+		panic(err)
+		return false
+	}
+	fmt.Println(attachVolumeResp)
+	return true
 }
