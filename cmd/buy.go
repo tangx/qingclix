@@ -6,6 +6,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/types"
 )
 
@@ -18,6 +19,8 @@ var buyCmd = &cobra.Command{
   2. 使用 -i 进入交互界面，选择自定购买参数`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// logrus.SetLevel(logrus.TraceLevel)
+		SetLogLevel(global.Verbose)
+
 		launch()
 	},
 }
@@ -70,19 +73,14 @@ func launchInstance(config ItemConfig) {
 	// Inital a Client
 	cli := types.Client{}
 
+	// 购买主机
 	instanceConfig := config.Instance
+	instances := buyInstance(cli, instanceConfig)
 
+	// 购买磁盘
 	volumeConfig := config.Volume
-
 	volumeConfig.Zone = instanceConfig.Zone // 保证 volume 和 instance 在相同可用区
 	volumeConfig.VolumeName = instanceConfig.InstanceName
-
-	contractConfig := config.Contract
-	contractConfig.Zone = instanceConfig.Zone
-
-	// 购买主机
-	instances := buyInstance(cli, instanceConfig)
-	// 购买磁盘
 	volumes := buyVolumeForInstance(cli, instances[0], volumeConfig)
 	// 绑定磁盘到主机
 	attachResult := attachVolumeToInstance(cli, instances[0], volumes, instanceConfig.Zone)
@@ -90,24 +88,26 @@ func launchInstance(config ItemConfig) {
 		logrus.Infof("attach Volimes(%s) to Instance(%s): %t", volumes, instances[0], attachResult)
 	}
 
-	// todo: 根据服务器配置
-	// 1. 创建 Contract
-	// 2. 付费 Contract
-	// 3. 绑定 服务器到 Contract
-
-	// // 付费服务器
-	// instanceContract := contractConfig
-	// instanceContract.Resources = instances
-	// ApplyLeaseAssociateContract(cli, instanceContract)
-	// // 付费硬盘
-	// volumeContract := contractConfig
-	// volumeContract.Resources = volumes
-	// ApplyLeaseAssociateContract(cli, volumeContract)
+	// 资源付费
+	contractConfig := config.Contract
+	contractConfig.Zone = instanceConfig.Zone
+	// 付费服务器
+	applyLeaseAssociateContract(cli, instances, contractConfig)
+	// 付费硬盘
+	applyLeaseAssociateContract(cli, volumes, contractConfig)
 
 }
 
-// ApplyLeaseAssociateContract 根据目标资源申请购买、支付合约，并绑定到对应的资源上。
-func ApplyLeaseAssociateContract(cli types.Client, params types.ApplyReservedContractWithResourcesRequest) (ok bool) {
+// applyLeaseAssociateContract 根据目标资源申请购买、支付合约，并绑定到对应的资源上。
+func applyLeaseAssociateContract(cli types.Client, resources []string, params types.ApplyReservedContractWithResourcesRequest) (ok bool) {
+
+	fmt.Println(resources)
+	if global.SkipContract {
+		logrus.Infof("强制跳过 %s 合约过程", resources)
+		return false
+	}
+
+	params.Resources = resources
 
 	// 购买合约
 	fmt.Printf("购买 %s 的合约: .. ", params.Resources)

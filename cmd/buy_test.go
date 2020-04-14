@@ -7,13 +7,13 @@ import (
 )
 
 func Test_ApplyLeaseAssociation(t *testing.T) {
+	volumes := []string{"vol-rkn2wv8q"}
 	params := types.ApplyReservedContractWithResourcesRequest{
 		Zone:      "pek3d",
 		AutoRenew: 1,
 		Months:    1,
-		Resources: []string{"vol-rkn2wv8q"},
 	}
 	cli := types.Client{}
-	ApplyLeaseAssociateContract(cli, params)
+	applyLeaseAssociateContract(cli, volumes, params)
 
 }
