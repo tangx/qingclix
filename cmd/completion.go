@@ -36,9 +36,11 @@ To configure your bash shell to load completions for each session add to your ba
 	Run: func(cmd *cobra.Command, args []string) {
 		if completion_shell == "zsh" {
 			rootCmd.GenZshCompletion(os.Stdout)
+			return
 		}
 		if completion_shell == "bash" {
 			rootCmd.GenBashCompletion(os.Stdout)
+			return
 		}
 		cmd.Help()
 	},
