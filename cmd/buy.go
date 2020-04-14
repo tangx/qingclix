@@ -64,14 +64,20 @@ func launch() {
 }
 
 // launchInstance 根据配置，购买服务器、磁盘及合约
-func launchInstance(itemConfig ItemConfig) {
+func launchInstance(config ItemConfig) {
 
 	// Inital a Client
 	cli := types.Client{}
 
+	instance := config.Instance
+
+	volume := config.Volume
+
+	contract := config.Contract
+	contract.Zone = instance.Zone
+
 	// 创建 instance 实例
 	fmt.Printf("购买主机....")
-	instance := itemConfig.Instance
 	runInstanceResp, err := cli.RunInstances(instance)
 	if err != nil {
 		panic(err)
@@ -97,7 +103,6 @@ func launchInstance(itemConfig ItemConfig) {
 
 	// 创建 volume 硬盘
 	fmt.Printf("购买硬盘....")
-	volume := itemConfig.Volume
 	volume.Zone = instance.Zone // 保证 volume 和 instance 在相同可用区
 	volume.VolumeName = instance.InstanceName
 	createVolumeResp, err := cli.CreateVolumes(volume)
@@ -143,15 +148,12 @@ func launchInstance(itemConfig ItemConfig) {
 	// 2. 付费 Contract
 	// 3. 绑定 服务器到 Contract
 
-	// instanceContract := contract
-	itemConfig.Contract.Zone = instance.Zone
-
 	// 付费服务器
-	instanceContract := itemConfig.Contract
+	instanceContract := contract
 	instanceContract.Resources = runInstanceResp.Instances
 	ApplyLeaseAssociateContract(cli, instanceContract)
 	// 付费硬盘
-	volumeContract := itemConfig.Contract
+	volumeContract := contract
 	volumeContract.Resources = createVolumeResp.Volumes
 	ApplyLeaseAssociateContract(cli, volumeContract)
 

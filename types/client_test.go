@@ -3,6 +3,8 @@ package types
 import (
 	"fmt"
 	"testing"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Test_DescribeZones(t *testing.T) {
@@ -127,6 +129,12 @@ func Test_DescribeVolumes(t *testing.T) {
 
 func Test_DescribeReservedContracts(t *testing.T) {
 	cli := Client{}
+
+	verbose := 8
+	logLevel := logrus.Level(verbose)
+
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetLevel(logLevel)
 
 	params := DescribeReservedContractsRequest{
 		ReservedContracts: []string{"rc-ojC5FC7r"},

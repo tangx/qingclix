@@ -47,6 +47,7 @@ func (cli *Client) Get(action string, params interface{}, resp interface{}) erro
 		logrus.Fatal(err)
 	}
 	// fmt.Printf("%s\n", body)
+	logrus.Debugf("%s", body)
 
 	// 判断请求是否错误
 	errResp := ErrorResponse{}
