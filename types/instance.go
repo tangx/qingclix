@@ -12,7 +12,6 @@ type RunInstancesRequest struct {
 	InstanceName  string   `yaml:"instance_name,omitempty" json:"instance_name,omitempty" url:"instance_name,omitempty"`
 	Zone          string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 	Vxnets        []string `yaml:"vxnets,omitempty" json:"vxnets,omitempty" url:"vxnets,omitempty,dotnumbered,numbered1"`
-	InstanceType  string   `yaml:"instance,omitempty" json:"instance_type,omitempty" url:"instance_type,omitempty"`
 }
 
 type RunInstancesResponse struct {
