@@ -8,7 +8,7 @@ on:
 jobs:
 
   build:
-    name: Build-macos
+    name: Build Binary
     runs-on: macos-latest
     steps:
 
@@ -28,11 +28,11 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+    - name: Show Environment Variables
+      run: env
 
-    - name: Build Darwin
-      run: go build -v -o bin/qingclix_Darwin_x86_64 . 
-    - name: Build Linux
-      run: CGO_ENABLED=0 GOOS=linux  go build -v -o bin/qingclix_Linux_x86_64 . 
+    - name: Build Binary
+      run: /bin/bash build.sh
     
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
