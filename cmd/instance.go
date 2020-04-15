@@ -33,7 +33,7 @@ func init() {
 // LoadPresetConfig 读取预设配置
 func LoadPresetConfig() PresetConfig {
 	body, err := ioutil.ReadFile(global.ConfigFile)
-	logrus.Debugf("%s", body)
+	logrus.Debugf("%s 配置文件内容:\n%s", global.ConfigFile, body)
 
 	if err != nil {
 		ConfigHelp()

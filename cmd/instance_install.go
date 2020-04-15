@@ -60,13 +60,32 @@ func InstallInstance(config ItemConfig) {
 	// Inital a Client
 	cli := types.Client{}
 
-	for i := 1; i <= global.Count; i++ {
+	// 直接创建
+	if global.Count == 0 {
+
+		installInstance(cli, config)
+		return
+	}
+
+	// 循环模式
+	originName := config.Instance.InstanceName
+	for i := 0; i < global.Count; i++ {
+		PostfixNumber := i + PostfixStartNumber
+		config.Instance.InstanceName = fmt.Sprintf("%s-%d", originName, PostfixNumber)
+
+		logrus.Debugln("config.Instance.InstanceName = ", config.Instance.InstanceName)
+
 		installInstance(cli, config)
 	}
 }
 
-// installInstance 根据配置，购买服务器、磁盘及合约
+// installInstance 根据配置， 购买服务器、 磁盘及合约
 func installInstance(cli types.Client, config ItemConfig) {
+
+	if global.Dryrun {
+		logrus.Infoln("dryrun 模式, 跳过购买, 直接返回")
+		return
+	}
 
 	// 购买主机
 	instanceConfig := config.Instance

@@ -19,4 +19,7 @@ var (
 
 	// Count 购买数量
 	Count int
+
+	// Dryrun 购买机器直接返回。
+	Dryrun bool
 )

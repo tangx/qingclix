@@ -21,10 +21,21 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+var (
+	// 购买多台实例时， instance_name 增加后缀起点
+	// example: InstancePostfixStartNumber=12
+	// instance_name-12, instance_name-13
+	PostfixStartNumber int
+)
+
 func init() {
 	rootCmd.PersistentFlags().IntVarP(&global.Verbose, "verbose", "v", 4, "logrus 日志等级。 0: Panic, 4: Info, 6: Trace. ")
 	rootCmd.PersistentFlags().BoolVarP(&global.SkipContract, "skip_contract", "", false, "强制跳过合约购买过程。")
-	rootCmd.PersistentFlags().IntVarP(&global.Count, "count", "c", 1, "设置购买数量")
+	rootCmd.PersistentFlags().IntVarP(&global.Count, "count", "c", 0, "设置购买数量, 0 为实例购买。 >1 为多实例增加后缀")
+	rootCmd.PersistentFlags().IntVarP(&PostfixStartNumber, "postfix_start", "", 1, "设置多实例购买时的后缀的起始值")
+
+	rootCmd.PersistentFlags().BoolVarP(&global.Dryrun, "dryrun", "", false, "不会真正购买。")
+
 }
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
