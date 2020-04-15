@@ -39,5 +39,5 @@ func instanceCloneMain() {
 		panic(err)
 	}
 
-	LaunchInstance(item)
+	InstallInstance(item)
 }

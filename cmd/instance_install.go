@@ -2,15 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"sort"
 	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/types"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 // installCmd represents the buy command
@@ -52,53 +49,24 @@ type ItemConfig struct {
 func instanceInstallMain() {
 
 	preset := LoadPresetConfig()
-	item := ChooseConfig(preset)
+	item := ChooseItem(preset)
 
-	LaunchInstance(item)
+	InstallInstance(item)
 }
 
-// ChooseConfig 选择预设配置
-func ChooseConfig(preset PresetConfig) ItemConfig {
-
-	var option []string
-	for k := range preset.Configs {
-		option = append(option, k)
-	}
-	// 结果排序，优化展示效果
-	sort.Strings(option)
-
-	// 选择
-	var qs = []*survey.Question{
-		{
-			Name: "choice",
-			Prompt: &survey.Select{
-				Message: "选择购买配置: ",
-				Options: option,
-			},
-		},
-	}
-	var choice string
-	err := survey.Ask(qs, &choice)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return preset.Configs[choice]
-}
-
-// LaunchInstance 根据配置，购买服务器、磁盘及合约, 外层调用
-func LaunchInstance(config ItemConfig) {
+// InstallInstance 根据配置，购买服务器、磁盘及合约, 外层调用
+func InstallInstance(config ItemConfig) {
 
 	// Inital a Client
 	cli := types.Client{}
 
 	for i := 1; i <= global.Count; i++ {
-		launchInstance(cli, config)
+		installInstance(cli, config)
 	}
 }
 
-// launchInstance 根据配置，购买服务器、磁盘及合约
-func launchInstance(cli types.Client, config ItemConfig) {
+// installInstance 根据配置，购买服务器、磁盘及合约
+func installInstance(cli types.Client, config ItemConfig) {
 
 	// 购买主机
 	instanceConfig := config.Instance

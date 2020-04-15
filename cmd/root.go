@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"sort"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/global"
+	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 var rootCmd = &cobra.Command{
@@ -58,6 +61,35 @@ func LoadPresetConfig() PresetConfig {
 	// fmt.Println(preset)
 
 	return preset
+}
+
+// ChooseItem 选择预设配置
+func ChooseItem(preset PresetConfig) ItemConfig {
+
+	var option []string
+	for k := range preset.Configs {
+		option = append(option, k)
+	}
+	// 结果排序，优化展示效果
+	sort.Strings(option)
+
+	// 选择
+	var qs = []*survey.Question{
+		{
+			Name: "choice",
+			Prompt: &survey.Select{
+				Message: "选择购买配置: ",
+				Options: option,
+			},
+		},
+	}
+	var choice string
+	err := survey.Ask(qs, &choice)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return preset.Configs[choice]
 }
 
 // 保存配置文件
