@@ -134,7 +134,7 @@ func payResources(cli types.Client, resources []string, params types.ApplyReserv
 	if leaseResp.RetCode == 0 {
 		fmt.Println("..OK")
 	} else {
-		fmt.Errorf("%s\n", leaseResp.Message)
+		logrus.Errorln(leaseResp.Message)
 	}
 
 	// 判断合约是否可用
@@ -257,7 +257,7 @@ func attachVolumeToInstance(cli types.Client, instance string, volumes []string,
 	}
 	attachVolumeResp, err := cli.AttachVolumes(attachVolParams)
 	if err != nil {
-		panic(err)
+		logrus.Errorln(err)
 		return false
 	}
 	fmt.Println(attachVolumeResp)
