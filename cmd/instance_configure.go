@@ -1,17 +1,3 @@
-// Copyright © 2020 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package cmd
 
 import (
@@ -61,8 +47,8 @@ func configureMain() {
 		configureClone(configure_clone_target)
 		return
 	}
-
 }
+
 func configureClone(instance string) {
 	cli := types.Client{}
 
@@ -78,15 +64,8 @@ func configureClone(instance string) {
 	if configure_label == "" {
 		configure_label = item.Instance.InstanceName + "_clone"
 	}
-	dumpConfig(configure_label, item)
+	appendItemConfig(configure_label, item)
 
-}
-
-func dumpConfig(name string, item ItemConfig) {
-	presetConfig := LoadPresetConfig()
-	presetConfig.Configs[name] = item
-
-	DumpPresetConfig(presetConfig)
 }
 
 func cloneConfig(cli types.Client, instance string) (config ItemConfig, err error) {
@@ -195,4 +174,11 @@ func cloneContract(cli types.Client, contract string) (params types.ApplyReserve
 	params.Months = respContract.Months
 
 	return
+}
+
+func appendItemConfig(name string, item ItemConfig) {
+	presetConfig := LoadPresetConfig()
+	presetConfig.Configs[name] = item
+
+	SaveConfigToFile(presetConfig)
 }

@@ -61,7 +61,7 @@ func LoadPresetConfig() PresetConfig {
 }
 
 // 保存配置文件
-func DumpPresetConfig(preset PresetConfig) {
+func WriteConfig(preset PresetConfig) {
 	data, err := json.MarshalIndent(preset, "", "  ")
 	if err != nil {
 		panic(err)
