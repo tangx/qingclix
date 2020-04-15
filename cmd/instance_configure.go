@@ -27,6 +27,7 @@ var (
 	configure_clone_target string
 	configure_interactive  bool
 	configure_label        string
+	configure_initial      bool
 )
 
 func init() {
@@ -35,9 +36,15 @@ func init() {
 	configureCmd.Flags().StringVarP(&configure_clone_target, "clone", "", "", "克隆配置")
 	configureCmd.Flags().StringVarP(&configure_label, "label", "l", "", "使用自定义label替代默认生成规则")
 	configureCmd.Flags().BoolVarP(&configure_interactive, "interactive", "i", false, "交互问答生成配置")
+	configureCmd.Flags().BoolVarP(&configure_initial, "initial", "", false, "初始化配置文件（注意: 覆盖现有文件)")
 }
 
 func configureMain() {
+	if configure_initial {
+		InitialConfig()
+		return
+	}
+
 	if configure_interactive {
 
 		return
