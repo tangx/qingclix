@@ -37,6 +37,7 @@ func init() {
 	configureCmd.Flags().StringVarP(&configure_label, "label", "l", "", "使用自定义label替代默认生成规则")
 	configureCmd.Flags().BoolVarP(&configure_interactive, "interactive", "i", false, "交互问答生成配置")
 	configureCmd.Flags().BoolVarP(&configure_initial, "initial", "", false, "初始化配置文件（注意: 覆盖现有文件)")
+
 }
 
 func configureMain() {
@@ -54,6 +55,13 @@ func configureMain() {
 		configureClone(configure_clone_target)
 		return
 	}
+}
+
+func appendItemConfig(name string, item ItemConfig) {
+	presetConfig := LoadPresetConfig()
+	presetConfig.Configs[name] = item
+
+	SaveConfigToFile(presetConfig)
 }
 
 func configureClone(instance string) {
@@ -181,11 +189,4 @@ func cloneContract(cli types.Client, contract string) (params types.ApplyReserve
 	params.Months = respContract.Months
 
 	return
-}
-
-func appendItemConfig(name string, item ItemConfig) {
-	presetConfig := LoadPresetConfig()
-	presetConfig.Configs[name] = item
-
-	SaveConfigToFile(presetConfig)
 }

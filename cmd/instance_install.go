@@ -19,7 +19,7 @@ var installCmd = &cobra.Command{
   2. 使用 -i 进入交互界面，选择自定购买参数`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// logrus.SetLevel(logrus.TraceLevel)
-		SetLogLevel(global.Verbose)
+		QingclixSetLogLevel(global.Verbose)
 
 		instanceInstallMain()
 	},

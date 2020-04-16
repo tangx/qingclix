@@ -44,7 +44,7 @@ func Execute() {
 	}
 }
 
-func SetLogLevel(level int) {
+func QingclixSetLogLevel(level int) {
 	logLevel := logrus.Level(level)
 	logrus.SetLevel(logLevel)
 }

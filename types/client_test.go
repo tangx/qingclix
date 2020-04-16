@@ -17,6 +17,7 @@ func DebugLevelMode() {
 
 }
 func Test_DescribeZones(t *testing.T) {
+	DebugLevelMode()
 	cli := Client{}
 	params := DescribeZonesRequest{
 		// Zone:   "pek3d",
