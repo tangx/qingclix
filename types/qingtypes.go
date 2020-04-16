@@ -5,9 +5,9 @@ import (
 )
 
 type Qingtypes struct {
-	InstanceType map[string]InstanceType `json:"instance_type,omitempty"`
-	VolumeType   map[string]VolumeType   `json:"volume_type,omitempty"`
-	ImageType    map[string]ImageType    `json:"image_type,omitempty"`
+	InstanceTypes map[string]InstanceType `json:"instance_types,omitempty"`
+	VolumeTypes   map[string]VolumeType   `json:"volume_types,omitempty"`
+	ImageTypes    map[string]ImageType    `json:"image_types,omitempty"`
 }
 
 type ImageType struct {

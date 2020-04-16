@@ -82,15 +82,15 @@ func customizeConfig() ItemConfig {
 		logrus.Error(err)
 	}
 
-	insTypes := qingtypes.InstanceType
-	imageTypes := qingtypes.ImageType
+	insTypes := qingtypes.InstanceTypes
+	imageTypes := qingtypes.ImageTypes
 	logrus.Debug(insTypes)
 
 	insPrarms := customizeInstance(insTypes, imageTypes)
 	insPrarms.InstanceName = configure_customize_label
 	logrus.Debug(insPrarms)
 
-	volTypes := qingtypes.VolumeType
+	volTypes := qingtypes.VolumeTypes
 	volsPramas := customizeVolume(volTypes)
 	logrus.Debug(volsPramas)
 
