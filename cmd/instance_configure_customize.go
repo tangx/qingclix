@@ -16,15 +16,10 @@ import (
 // customizeCmd represents the customize command
 var customizeCmd = &cobra.Command{
 	Use:   "customize",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "使用交互界面，自定义配置",
+	Long:  `使用交互界面，灵活生成所选配置`,
 	Run: func(cmd *cobra.Command, args []string) {
-		QingclixSetLogLevel(8)
+		QingclixSetLogLevel(global.Verbose)
 
 		configureCustomizeMain()
 	},
@@ -33,13 +28,15 @@ to quickly create a Cobra application.`,
 var (
 	configure_customize_qingtypes    string
 	configure_customize_dump_defualt bool
+	configure_customize_label        string
 )
 
 func init() {
 	configureCmd.AddCommand(customizeCmd)
 	customizeCmd.Flags().StringVarP(&configure_customize_qingtypes, "qingtype", "", "/path/to/file.json", "使用用户自定义 qingtypes 数据替代默认值。以便适应青云资源调整")
-
 	customizeCmd.Flags().BoolVarP(&configure_customize_dump_defualt, "dump_default", "", false, "打印默认 qingtypes 信息")
+	customizeCmd.Flags().StringVarP(&configure_customize_label, "label", "l", "customize-item", "增加配置的名称")
+
 }
 
 func configureCustomizeMain() {
@@ -48,9 +45,8 @@ func configureCustomizeMain() {
 		dumpDefaultQingtypes()
 		return
 	}
-
-	customizeConfig()
-
+	item := customizeConfig()
+	appendItemConfig(configure_customize_label, item)
 }
 
 func dumpDefaultQingtypes() {
@@ -80,7 +76,7 @@ func loadQingtypes() (qtypes types.Qingtypes, err error) {
 	return types.LoadQingTypes(data)
 }
 
-func customizeConfig() {
+func customizeConfig() ItemConfig {
 	qingtypes, err := loadQingtypes()
 	if err != nil {
 		logrus.Error(err)
@@ -91,26 +87,36 @@ func customizeConfig() {
 	logrus.Debug(insTypes)
 
 	insPrarms := customizeInstance(insTypes, imageTypes)
+	insPrarms.InstanceName = configure_customize_label
 	logrus.Debug(insPrarms)
 
 	volTypes := qingtypes.VolumeType
-	volPramas := customizeVolume(volTypes)
-	logrus.Debug(volPramas)
+	volsPramas := customizeVolume(volTypes)
+	logrus.Debug(volsPramas)
+
+	contractParams := customizeContract()
+	logrus.Debug(contractParams)
+
+	return ItemConfig{
+		Instance: insPrarms,
+		Volumes:  volsPramas,
+		Contract: contractParams,
+	}
 }
 
 func customizeInstance(insTypes map[string]types.InstanceType, imageTypes map[string]types.ImageType) (params types.RunInstancesRequest) {
 
 	var inames []string
 	for idx := range insTypes {
-		logrus.Debug("instance idx=", idx)
 		inames = append(inames, idx)
 	}
+	logrus.Debug(inames)
 
 	var images []string
 	for idx := range imageTypes {
-		logrus.Debug("image idx=", idx)
 		images = append(images, idx)
 	}
+	logrus.Debug(images)
 
 	// ask question
 	var qs = []*survey.Question{
@@ -169,17 +175,26 @@ func customizeInstance(insTypes map[string]types.InstanceType, imageTypes map[st
 		InstanceClass: insTypes[answers.Name].Class,
 		CPU:           answers.CPU,
 		Memory:        answers.CPU * 1024 * ratio,
+		ImageID:       answers.Image,
+		LoginKeypair:  "kp-2kodyll8",
+		LoginMode:     "keypair",
 	}
 
 	return
 }
 
-func customizeVolume(volTypes map[string]types.VolumeType) (params types.CreateVolumesRequest) {
+func customizeVolume(volTypes map[string]types.VolumeType) (params []types.CreateVolumesRequest) {
 	var names []string
 	for idx := range volTypes {
-		logrus.Debug("instance idx=", idx)
 		names = append(names, idx)
 	}
+	logrus.Debug(names)
+
+	answers := struct {
+		Name     string
+		Size     int
+		Continue bool
+	}{}
 
 	var qs = []*survey.Question{
 		{
@@ -187,6 +202,7 @@ func customizeVolume(volTypes map[string]types.VolumeType) (params types.CreateV
 			Prompt: &survey.Select{
 				Message: "选择磁盘类型",
 				Options: names,
+				Default: "200",
 			},
 		},
 		{
@@ -194,24 +210,80 @@ func customizeVolume(volTypes map[string]types.VolumeType) (params types.CreateV
 			Prompt: &survey.Select{
 				Message: "选择磁盘大小",
 				Options: []string{"100", "200", "300", "500", "1000", "2000"},
+				Default: "100",
+			},
+		},
+	}
+
+	for i := 1; i <= 4; i++ {
+		var qsAddVolume = []*survey.Question{
+			{
+				Name: "continue",
+				Prompt: &survey.Select{
+					Message: fmt.Sprintf("添加硬盘 %d/4 ", i),
+					Options: []string{"true", "false"},
+					Default: "true",
+				},
+			},
+		}
+		survey.Ask(qsAddVolume, &answers)
+		if !answers.Continue {
+			break
+		}
+
+		survey.Ask(qs, &answers)
+		logrus.Debug(answers)
+
+		valumeParams := types.CreateVolumesRequest{
+			Size:       answers.Size,
+			VolumeType: volTypes[answers.Name].Type,
+		}
+		params = append(params, valumeParams)
+
+	}
+	return
+}
+
+func customizeContract() (params types.ApplyReservedContractWithResourcesRequest) {
+	var qsMonths = []*survey.Question{
+		{
+			Name: "months",
+			Prompt: &survey.Select{
+				Message: "是否包月",
+				Options: []string{"true", "false"},
+				Default: "true",
+			},
+		},
+	}
+	var qsAutoRenew = []*survey.Question{
+		{
+			Name: "autoRenew",
+			Prompt: &survey.Select{
+				Message: "是否自动续费（true）",
+				Options: []string{"true", "false"},
+				Default: "true",
 			},
 		},
 	}
 
 	answers := struct {
-		Name string
-		Size int
+		AutoRenew bool
+		Months    bool
 	}{}
 
-	err := survey.Ask(qs, &answers)
+	err := survey.Ask(qsMonths, &answers)
 	if err != nil {
 		logrus.Error(err)
 	}
 	logrus.Debug(answers)
 
-	params = types.CreateVolumesRequest{
-		Size:       answers.Size,
-		VolumeType: volTypes[answers.Name].Type,
+	if answers.Months {
+		params.Months = 1
+		survey.Ask(qsAutoRenew, &answers)
 	}
+	if answers.AutoRenew {
+		params.AutoRenew = 1
+	}
+
 	return
 }

@@ -149,7 +149,7 @@ func payResources(cli types.Client, resources []string, params types.ApplyReserv
 	leaseParams := types.LeaseReservedContractRequest{
 		Contract: resp.ContractID,
 	}
-	leaseResp, err := cli.LeaseReservedContract(leaseParams)
+	leaseResp, _ := cli.LeaseReservedContract(leaseParams)
 	if leaseResp.RetCode == 0 {
 		fmt.Println("..OK")
 	} else {
