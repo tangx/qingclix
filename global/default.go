@@ -26,14 +26,13 @@ var (
 
 var QingTypes string = `
 {
-    "instance_type":{
-        
+    "instance_types":{
         "基础型":{"name":"基础型","type":"s1","class":101,"desc":"最垃圾的配置, 一般不用"},
         "企业型e1":{"name":"企业型e1","type":"e1","class":201,"desc":"虽然叫企业型, 但是并不保证高可用。"},
         "企业型e2":{"name":"企业型e2","type":"e2","class":202,"desc":"(首选)企业型e2, 保证高可用"},
         "专业增强型":{"name":"专业增强型","type":"p1","class":301,"desc":"比企业e2好一点"}
     },
-    "volume_type":{
+    "volume_types":{
         "性能型":{"name":"性能型","type":0,"desc":""},
         "容量型":{"name":"容量型","type":2,"desc":""},
         "基础型":{"name":"基础型","type":100,"desc":"基础型硬盘是 100 (只能被基础型主机挂载)"},
@@ -41,11 +40,14 @@ var QingTypes string = `
         "超高性能型":{"name":"超高性能型","type":3,"desc":"超高性能型是 3 (只能被超高性能主机挂载)"},
         "NeonSAN(企业级分布式SAN)":{"name":"NeonSAN(企业级分布式SAN)","type":5,"desc":"最好的硬盘，超级贵。(企业级分布式SAN)"}
     },
-    "image_type":{
+    "image_types":{
         "ubuntu16.04":{"name":"ubuntu16.04","image":"xeu1843","desc":""},
         "centos7.6":{"name":"centos7.6","image":"xeu1843","desc":""},
         "debian9":{"name":"debian9","image":"xeu1843","desc":""},
         "自定义centos7-kernel5.8":{"name":"自定义centos7-kernel5.8","image":"xeu1843","desc":""}
-    }
+
+    },
+    "zones":["pek3d","pek3"],
+    "vxnets":["vxnet-sn2rnad","net1","net2"]
 }
 `

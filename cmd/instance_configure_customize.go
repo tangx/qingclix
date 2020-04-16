@@ -82,11 +82,10 @@ func customizeConfig() ItemConfig {
 		logrus.Error(err)
 	}
 
-	insTypes := qingtypes.InstanceTypes
-	imageTypes := qingtypes.ImageTypes
-	logrus.Debug(insTypes)
+	// insTypes := qingtypes.InstanceTypes
+	// logrus.Debug(insTypes)
 
-	insPrarms := customizeInstance(insTypes, imageTypes)
+	insPrarms := customizeInstance(qingtypes)
 	insPrarms.InstanceName = configure_customize_label
 	logrus.Debug(insPrarms)
 
@@ -104,16 +103,16 @@ func customizeConfig() ItemConfig {
 	}
 }
 
-func customizeInstance(insTypes map[string]types.InstanceType, imageTypes map[string]types.ImageType) (params types.RunInstancesRequest) {
+func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequest) {
 
 	var inames []string
-	for idx := range insTypes {
+	for idx := range qingtypes.InstanceTypes {
 		inames = append(inames, idx)
 	}
 	logrus.Debug(inames)
 
 	var images []string
-	for idx := range imageTypes {
+	for idx := range qingtypes.ImageTypes {
 		images = append(images, idx)
 	}
 	logrus.Debug(images)
@@ -151,6 +150,22 @@ func customizeInstance(insTypes map[string]types.InstanceType, imageTypes map[st
 				Default: "2",
 			},
 		},
+		{
+			Name: "zone",
+			Prompt: &survey.Select{
+				Message: "选择可用区",
+				Options: qingtypes.Zones,
+				Default: "pek3d",
+			},
+		},
+		{
+			Name: "vxnet",
+			Prompt: &survey.Select{
+				Message: "选择可用区",
+				Options: qingtypes.Vxnets,
+				Default: "",
+			},
+		},
 	}
 
 	answers := struct {
@@ -159,6 +174,8 @@ func customizeInstance(insTypes map[string]types.InstanceType, imageTypes map[st
 		CPU    int
 		Memory int
 		Image  string
+		Zone   string
+		Vxnet  string
 	}{}
 
 	err := survey.Ask(qs, &answers)
@@ -172,12 +189,14 @@ func customizeInstance(insTypes map[string]types.InstanceType, imageTypes map[st
 
 	// transfer
 	params = types.RunInstancesRequest{
-		InstanceClass: insTypes[answers.Name].Class,
+		InstanceClass: qingtypes.InstanceTypes[answers.Name].Class,
 		CPU:           answers.CPU,
 		Memory:        answers.CPU * 1024 * ratio,
 		ImageID:       answers.Image,
 		LoginKeypair:  "kp-2kodyll8",
 		LoginMode:     "keypair",
+		Zone:          answers.Zone,
+		Vxnets:        []string{answers.Vxnet},
 	}
 
 	return

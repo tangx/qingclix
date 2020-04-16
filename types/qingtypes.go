@@ -8,6 +8,8 @@ type Qingtypes struct {
 	InstanceTypes map[string]InstanceType `json:"instance_types,omitempty"`
 	VolumeTypes   map[string]VolumeType   `json:"volume_types,omitempty"`
 	ImageTypes    map[string]ImageType    `json:"image_types,omitempty"`
+	Zones         []string                `json:"zones,omitempty"`
+	Vxnets        []string                `json:"vxnets,omitempty"`
 }
 
 type ImageType struct {
