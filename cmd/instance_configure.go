@@ -32,6 +32,7 @@ var (
 
 func init() {
 	instanceCmd.AddCommand(configureCmd)
+	rootCmd.AddCommand(configureCmd)
 
 	configureCmd.Flags().StringVarP(&configure_clone_target, "clone", "", "", "克隆目标服务器配置")
 	configureCmd.Flags().StringVarP(&configure_label, "label", "l", "", "使用自定义label替代默认生成规则")
