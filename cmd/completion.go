@@ -23,6 +23,14 @@ import (
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion",
+	Short: "Generates completion scripts",
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
+	},
+}
+
+var completionBashCmd = &cobra.Command{
+	Use:   "bash",
 	Short: "Generates bash completion scripts",
 	Long: `To load completion run
 
@@ -34,23 +42,26 @@ To configure your bash shell to load completions for each session add to your ba
 . <(bitbucket completion)
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		if completion_shell == "zsh" {
-			rootCmd.GenZshCompletion(os.Stdout)
-			return
-		}
-		if completion_shell == "bash" {
-			rootCmd.GenBashCompletion(os.Stdout)
-			return
-		}
-		cmd.Help()
+		rootCmd.GenBashCompletion(os.Stdout)
 	},
 }
 
-var (
-	completion_shell string
-)
+// completionCmd represents the completion command
+var completionZshCmd = &cobra.Command{
+	Use:   "zsh",
+	Short: "Generates bash completion scripts",
+	Run: func(cmd *cobra.Command, args []string) {
+		rootCmd.GenZshCompletion(os.Stdout)
+	},
+}
+
+// var (
+// 	completion_shell string
+// )
 
 func init() {
 	rootCmd.AddCommand(completionCmd)
-	completionCmd.Flags().StringVarP(&completion_shell, "completion", "", "bash", "生成自动补全文件，支持 bash,zsh")
+	completionCmd.AddCommand(completionBashCmd)
+	completionCmd.AddCommand(completionZshCmd)
+	// completionCmd.Flags().StringVarP(&completion_shell, "completion", "", "bash", "生成自动补全文件，支持 bash,zsh")
 }
