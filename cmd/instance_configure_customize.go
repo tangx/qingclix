@@ -106,7 +106,10 @@ func customizeConfig() ItemConfig {
 	// // get all volumesType
 	// volTypes := qingtypes.VolumeTypes
 	// // get support volumesType
-	volTypes := supportVolumeType(instype, qingtypes.VolumeTypes)
+	// volTypes := supportVolumeType(instype, qingtypes.VolumeTypes)
+
+	support := qingtypes.Relation[instype]
+	volTypes := supportVolumeType2(instype, support, qingtypes.VolumeTypes)
 
 	volsPramas := customizeVolume(volTypes)
 	logrus.Debug(volsPramas)
@@ -161,7 +164,8 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 		qsZoneOpts[tip] = commontype
 		zones = append(zones, tip)
 	}
-	logrus.Debug(zones)
+	logrus.Debug("zones = ", zones)
+	logrus.Debug("qsZoneOpts = ", qsZoneOpts)
 
 	// keypairs
 	var qsKeypairOpts = make(map[string]types.CommonType)
@@ -203,7 +207,6 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 			Prompt: &survey.Select{
 				Message: "选择操作系统镜像",
 				Options: images,
-				// Default: "2",
 			},
 		},
 		{
@@ -211,15 +214,13 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 			Prompt: &survey.Select{
 				Message: "选择可用区",
 				Options: zones,
-				Default: "pek3d",
 			},
 		},
 		{
 			Name: "vxnet",
 			Prompt: &survey.Select{
-				Message: "选择可用区",
+				Message: "选择网络",
 				Options: vxnets,
-				Default: "",
 			},
 		},
 		{
@@ -227,7 +228,6 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 			Prompt: &survey.Select{
 				Message: "选择登录密钥",
 				Options: keypairs,
-				Default: "",
 			},
 		},
 	}
@@ -252,11 +252,8 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 	// 倍率转换
 	ratio, _ := strconv.Atoi(strings.Split(answers.Ratio, ":")[1])
 
-	// logrus.Error(qsKeypairOpts[answers.Name].Name)
-	// logrus.Error(qsKeypairOpts[answers.Name].Name)
-	// logrus.Error(qsKeypairOpts[answers.Name].Name)
-	// logrus.Error(qsVxnetOpts[answers.Name].Name)
-	// logrus.Error(qsZoneOpts[answers.Name].Name)
+	logrus.Debug("answers.Name = ", answers.Zone)
+	logrus.Debug("qsZoneOpts[answers.Zone] = ", qsZoneOpts[answers.Zone])
 
 	// transfer
 	params = types.RunInstancesRequest{
@@ -273,16 +270,16 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 	return
 }
 
-func supportVolumeType(instancetype string, volTypes []types.VolumeType) (support_types []types.VolumeType) {
+func supportVolumeType2(instancetype string, support []int, volTypes []types.VolumeType) (support_types []types.VolumeType) {
 
-	var support []int
-	switch instancetype {
-	case "e1", "e2", "p1":
-		support = []int{2, 3, 5, 200}
+	// var support []int
+	// switch instancetype {
+	// case "e1", "e2", "p1":
+	// 	support = []int{2, 3, 5, 200}
 
-	case "s1":
-		support = []int{0, 100}
-	}
+	// case "s1":
+	// 	support = []int{0, 100}
+	// }
 
 	for _, v := range support {
 		for _, v2 := range volTypes {

@@ -5,13 +5,13 @@ import (
 )
 
 type Qingtypes struct {
-	InstanceTypes []InstanceType `json:"instance_types,omitempty"`
-	VolumeTypes   []VolumeType   `json:"volume_types,omitempty"`
-	ImageTypes    []ImageType    `json:"image_types,omitempty"`
-	Zones         []CommonType   `json:"zones,omitempty"`
-	Vxnets        []CommonType   `json:"vxnets,omitempty"`
-	Keypairs      []CommonType   `json:"keypairs,omitempty"`
-	Relationship  Relation       `json:"relation,omitempty"`
+	InstanceTypes []InstanceType   `json:"instance_types,omitempty"`
+	VolumeTypes   []VolumeType     `json:"volume_types,omitempty"`
+	ImageTypes    []ImageType      `json:"image_types,omitempty"`
+	Zones         []CommonType     `json:"zones,omitempty"`
+	Vxnets        []CommonType     `json:"vxnets,omitempty"`
+	Keypairs      []CommonType     `json:"keypairs,omitempty"`
+	Relation      map[string][]int `json:"relation,omitempty"`
 }
 
 type CommonType struct {
@@ -30,10 +30,6 @@ type InstanceType struct {
 	Type  string `json:"type,omitempty"`
 	Class int    `json:"class,omitempty"`
 	Desc  string `json:"desc,omitempty"`
-}
-
-type Relation struct {
-	Ship map[string][]int `json:"ship,omitempty"`
 }
 
 type VolumeType struct {
