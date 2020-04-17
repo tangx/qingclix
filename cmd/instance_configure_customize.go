@@ -3,8 +3,6 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"strconv"
-	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -85,9 +83,9 @@ func customizeConfig() ItemConfig {
 	// insTypes := qingtypes.InstanceTypes
 	// logrus.Debug(insTypes)
 
-	insPrarms := customizeInstance(qingtypes)
-	insPrarms.InstanceName = configure_customize_label
-	logrus.Debug(insPrarms)
+	// insPrarms := customizeInstance(qingtypes)
+	// insPrarms.InstanceName = configure_customize_label
+	// logrus.Debug(insPrarms)
 
 	volTypes := qingtypes.VolumeTypes
 	volsPramas := customizeVolume(volTypes)
@@ -97,122 +95,127 @@ func customizeConfig() ItemConfig {
 	logrus.Debug(contractParams)
 
 	return ItemConfig{
-		Instance: insPrarms,
-		Volumes:  volsPramas,
-		Contract: contractParams,
+		// Instance: insPrarms,
+		// Volumes:  volsPramas,
+		// Contract: contractParams,
 	}
 }
 
-func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequest) {
+// func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequest) {
 
-	var inames []string
-	for idx := range qingtypes.InstanceTypes {
-		inames = append(inames, idx)
-	}
-	logrus.Debug(inames)
+// 	var inames []string
+// 	for idx := range qingtypes.InstanceTypes {
+// 		inames = append(inames, idx)
+// 	}
+// 	logrus.Debug(inames)
 
-	var images []string
-	for idx := range qingtypes.ImageTypes {
-		images = append(images, idx)
-	}
-	logrus.Debug(images)
+// 	var images []string
+// 	for idx := range qingtypes.ImageTypes {
+// 		images = append(images, idx)
+// 	}
+// 	logrus.Debug(images)
 
-	// ask question
-	var qs = []*survey.Question{
-		{
-			Name: "name",
-			Prompt: &survey.Select{
-				Message: "选择服务器类型",
-				Options: inames,
-			},
-		},
-		{
-			Name: "cpu",
-			Prompt: &survey.Select{
-				Message: "选择 CPU 核数",
-				Options: []string{"1", "2", "4", "8", "16", "32", "64"},
-				Default: "2",
-			},
-		},
-		{
-			Name: "ratio",
-			Prompt: &survey.Select{
-				Message: "选择 cpu:memory 比例",
-				Options: []string{"1:2", "1:4"},
-				Default: "1:2",
-			},
-		},
-		{
-			Name: "image",
-			Prompt: &survey.Select{
-				Message: "选择操作系统镜像",
-				Options: images,
-				Default: "2",
-			},
-		},
-		{
-			Name: "zone",
-			Prompt: &survey.Select{
-				Message: "选择可用区",
-				Options: qingtypes.Zones,
-				Default: "pek3d",
-			},
-		},
-		{
-			Name: "vxnet",
-			Prompt: &survey.Select{
-				Message: "选择可用区",
-				Options: qingtypes.Vxnets,
-				Default: "",
-			},
-		},
-	}
+// 	// ask question
+// 	var qs = []*survey.Question{
+// 		{
+// 			Name: "name",
+// 			Prompt: &survey.Select{
+// 				Message: "选择服务器类型",
+// 				Options: inames,
+// 			},
+// 		},
+// 		{
+// 			Name: "cpu",
+// 			Prompt: &survey.Select{
+// 				Message: "选择 CPU 核数",
+// 				Options: []string{"1", "2", "4", "8", "16", "32", "64"},
+// 				Default: "2",
+// 			},
+// 		},
+// 		{
+// 			Name: "ratio",
+// 			Prompt: &survey.Select{
+// 				Message: "选择 cpu:memory 比例",
+// 				Options: []string{"1:2", "1:4"},
+// 				Default: "1:2",
+// 			},
+// 		},
+// 		{
+// 			Name: "image",
+// 			Prompt: &survey.Select{
+// 				Message: "选择操作系统镜像",
+// 				Options: images,
+// 				Default: "2",
+// 			},
+// 		},
+// 		{
+// 			Name: "zone",
+// 			Prompt: &survey.Select{
+// 				Message: "选择可用区",
+// 				Options: qingtypes.Zones,
+// 				Default: "pek3d",
+// 			},
+// 		},
+// 		{
+// 			Name: "vxnet",
+// 			Prompt: &survey.Select{
+// 				Message: "选择可用区",
+// 				Options: qingtypes.Vxnets,
+// 				Default: "",
+// 			},
+// 		},
+// 	}
 
-	answers := struct {
-		Name   string
-		Ratio  string
-		CPU    int
-		Memory int
-		Image  string
-		Zone   string
-		Vxnet  string
-	}{}
+// 	answers := struct {
+// 		Name   string
+// 		Ratio  string
+// 		CPU    int
+// 		Memory int
+// 		Image  string
+// 		Zone   string
+// 		Vxnet  string
+// 	}{}
 
-	err := survey.Ask(qs, &answers)
-	if err != nil {
-		logrus.Error(err)
-	}
-	logrus.Debug(answers)
+// 	err := survey.Ask(qs, &answers)
+// 	if err != nil {
+// 		logrus.Error(err)
+// 	}
+// 	logrus.Debug(answers)
 
-	// 倍率转换
-	ratio, _ := strconv.Atoi(strings.Split(answers.Ratio, ":")[1])
+// 	// 倍率转换
+// 	ratio, _ := strconv.Atoi(strings.Split(answers.Ratio, ":")[1])
 
-	// transfer
-	params = types.RunInstancesRequest{
-		InstanceClass: qingtypes.InstanceTypes[answers.Name].Class,
-		CPU:           answers.CPU,
-		Memory:        answers.CPU * 1024 * ratio,
-		ImageID:       answers.Image,
-		LoginKeypair:  "kp-2kodyll8",
-		LoginMode:     "keypair",
-		Zone:          answers.Zone,
-		Vxnets:        []string{answers.Vxnet},
-	}
+// 	// transfer
+// 	params = types.RunInstancesRequest{
+// 		InstanceClass: qingtypes.InstanceTypes[answers.Name].Class,
+// 		CPU:           answers.CPU,
+// 		Memory:        answers.CPU * 1024 * ratio,
+// 		ImageID:       answers.Image,
+// 		LoginKeypair:  "kp-2kodyll8",
+// 		LoginMode:     "keypair",
+// 		Zone:          answers.Zone,
+// 		Vxnets:        []string{answers.Vxnet},
+// 	}
 
-	return
-}
+// 	return
+// }
 
-func customizeVolume(volTypes map[string]types.VolumeType) (params []types.CreateVolumesRequest) {
+func customizeVolume(volTypes []types.VolumeType) (params []types.CreateVolumesRequest) {
+
+	var qsOpts = make(map[string]types.VolumeType)
 	var names []string
-	for idx := range volTypes {
-		names = append(names, idx)
+	for _, voltype := range volTypes {
+		tip := fmt.Sprintf("%s -- %s", voltype.Name, voltype.Desc)
+
+		qsOpts[tip] = voltype
+		names = append(names, tip)
 	}
 	logrus.Debug(names)
+	logrus.Debug(qsOpts)
 
 	answers := struct {
-		Name     string
-		Size     int
-		Continue bool
+		Name string
+		Size int
 	}{}
 
 	var qs = []*survey.Question{
@@ -221,7 +224,6 @@ func customizeVolume(volTypes map[string]types.VolumeType) (params []types.Creat
 			Prompt: &survey.Select{
 				Message: "选择磁盘类型",
 				Options: names,
-				Default: "200",
 			},
 		},
 		{
@@ -245,17 +247,21 @@ func customizeVolume(volTypes map[string]types.VolumeType) (params []types.Creat
 				},
 			},
 		}
-		survey.Ask(qsAddVolume, &answers)
-		if !answers.Continue {
+
+		var next bool
+		survey.Ask(qsAddVolume, &next)
+		if !next {
 			break
 		}
 
 		survey.Ask(qs, &answers)
 		logrus.Debug(answers)
+		logrus.Debug("answers.Name = ", answers.Name)
+		logrus.Debug("qsOpts[answers.Name] = ", qsOpts[answers.Name])
 
 		valumeParams := types.CreateVolumesRequest{
 			Size:       answers.Size,
-			VolumeType: volTypes[answers.Name].Type,
+			VolumeType: qsOpts[answers.Name].Type,
 		}
 		params = append(params, valumeParams)
 
