@@ -5,11 +5,13 @@ import (
 )
 
 type Qingtypes struct {
-	InstanceTypes map[string]InstanceType `json:"instance_types,omitempty"`
-	VolumeTypes   map[string]VolumeType   `json:"volume_types,omitempty"`
-	ImageTypes    map[string]ImageType    `json:"image_types,omitempty"`
-	Zones         []string                `json:"zones,omitempty"`
-	Vxnets        []string                `json:"vxnets,omitempty"`
+	InstanceTypes []InstanceType `json:"instance_types,omitempty"`
+	VolumeTypes   []VolumeType   `json:"volume_types,omitempty"`
+	ImageTypes    []ImageType    `json:"image_types,omitempty"`
+	Zones         []string       `json:"zones,omitempty"`
+	Vxnets        []string       `json:"vxnets,omitempty"`
+	Keypair       []string       `json:"keypair,omitempty"`
+	Relationship  Relation       `json:"relation,omitempty"`
 }
 
 type ImageType struct {
@@ -23,6 +25,10 @@ type InstanceType struct {
 	Type  string `json:"type,omitempty"`
 	Class int    `json:"class,omitempty"`
 	Desc  string `json:"desc,omitempty"`
+}
+
+type Relation struct {
+	Ship map[string][]int `json:"ship,omitempty"`
 }
 
 type VolumeType struct {
