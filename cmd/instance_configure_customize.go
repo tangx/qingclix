@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"strconv"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -80,12 +82,12 @@ func customizeConfig() ItemConfig {
 		logrus.Error(err)
 	}
 
-	// insTypes := qingtypes.InstanceTypes
-	// logrus.Debug(insTypes)
+	insTypes := qingtypes.InstanceTypes
+	logrus.Debug(insTypes)
 
-	// insPrarms := customizeInstance(qingtypes)
-	// insPrarms.InstanceName = configure_customize_label
-	// logrus.Debug(insPrarms)
+	insPrarms := customizeInstance(qingtypes)
+	insPrarms.InstanceName = configure_customize_label
+	logrus.Debug(insPrarms)
 
 	volTypes := qingtypes.VolumeTypes
 	volsPramas := customizeVolume(volTypes)
@@ -95,110 +97,128 @@ func customizeConfig() ItemConfig {
 	logrus.Debug(contractParams)
 
 	return ItemConfig{
-		// Instance: insPrarms,
-		// Volumes:  volsPramas,
-		// Contract: contractParams,
+		Instance: insPrarms,
+		Volumes:  volsPramas,
+		Contract: contractParams,
 	}
 }
 
-// func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequest) {
+func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequest) {
 
-// 	var inames []string
-// 	for idx := range qingtypes.InstanceTypes {
-// 		inames = append(inames, idx)
-// 	}
-// 	logrus.Debug(inames)
+	var qsOpts = make(map[string]types.InstanceType)
+	var instances []string
+	for _, instype := range qingtypes.InstanceTypes {
+		tip := fmt.Sprintf("%s [%s] -- %s", instype.Name, instype.Type, instype.Desc)
+		qsOpts[tip] = instype
+		instances = append(instances, tip)
+	}
+	logrus.Debug(instances)
 
-// 	var images []string
-// 	for idx := range qingtypes.ImageTypes {
-// 		images = append(images, idx)
-// 	}
-// 	logrus.Debug(images)
+	// image
 
-// 	// ask question
-// 	var qs = []*survey.Question{
-// 		{
-// 			Name: "name",
-// 			Prompt: &survey.Select{
-// 				Message: "选择服务器类型",
-// 				Options: inames,
-// 			},
-// 		},
-// 		{
-// 			Name: "cpu",
-// 			Prompt: &survey.Select{
-// 				Message: "选择 CPU 核数",
-// 				Options: []string{"1", "2", "4", "8", "16", "32", "64"},
-// 				Default: "2",
-// 			},
-// 		},
-// 		{
-// 			Name: "ratio",
-// 			Prompt: &survey.Select{
-// 				Message: "选择 cpu:memory 比例",
-// 				Options: []string{"1:2", "1:4"},
-// 				Default: "1:2",
-// 			},
-// 		},
-// 		{
-// 			Name: "image",
-// 			Prompt: &survey.Select{
-// 				Message: "选择操作系统镜像",
-// 				Options: images,
-// 				Default: "2",
-// 			},
-// 		},
-// 		{
-// 			Name: "zone",
-// 			Prompt: &survey.Select{
-// 				Message: "选择可用区",
-// 				Options: qingtypes.Zones,
-// 				Default: "pek3d",
-// 			},
-// 		},
-// 		{
-// 			Name: "vxnet",
-// 			Prompt: &survey.Select{
-// 				Message: "选择可用区",
-// 				Options: qingtypes.Vxnets,
-// 				Default: "",
-// 			},
-// 		},
-// 	}
+	var qsImageOpts = make(map[string]types.ImageType)
+	var images []string
+	for _, imgtype := range qingtypes.ImageTypes {
+		tip := fmt.Sprintf("%s [%s] -- %s", imgtype.Name, imgtype.Image, imgtype.Desc)
+		qsImageOpts[tip] = imgtype
+		images = append(images, tip)
 
-// 	answers := struct {
-// 		Name   string
-// 		Ratio  string
-// 		CPU    int
-// 		Memory int
-// 		Image  string
-// 		Zone   string
-// 		Vxnet  string
-// 	}{}
+	}
+	logrus.Debug(images)
 
-// 	err := survey.Ask(qs, &answers)
-// 	if err != nil {
-// 		logrus.Error(err)
-// 	}
-// 	logrus.Debug(answers)
+	// ask question
+	var qs = []*survey.Question{
+		{
+			Name: "name",
+			Prompt: &survey.Select{
+				Message: "选择服务器类型",
+				Options: instances,
+			},
+		},
+		{
+			Name: "cpu",
+			Prompt: &survey.Select{
+				Message: "选择 CPU 核数",
+				Options: []string{"1", "2", "4", "8", "16", "32", "64"},
+				Default: "2",
+			},
+		},
+		{
+			Name: "ratio",
+			Prompt: &survey.Select{
+				Message: "选择 cpu:memory 比例",
+				Options: []string{"1:2", "1:4"},
+				Default: "1:2",
+			},
+		},
+		{
+			Name: "image",
+			Prompt: &survey.Select{
+				Message: "选择操作系统镜像",
+				Options: images,
+				Default: "2",
+			},
+		},
+		{
+			Name: "zone",
+			Prompt: &survey.Select{
+				Message: "选择可用区",
+				Options: qingtypes.Zones,
+				Default: "pek3d",
+			},
+		},
+		{
+			Name: "vxnet",
+			Prompt: &survey.Select{
+				Message: "选择可用区",
+				Options: qingtypes.Vxnets,
+				Default: "",
+			},
+		},
+		{
+			Name: "keypair",
+			Prompt: &survey.Select{
+				Message: "选择可用区",
+				Options: qingtypes.Keypairs,
+				Default: "",
+			},
+		},
+	}
 
-// 	// 倍率转换
-// 	ratio, _ := strconv.Atoi(strings.Split(answers.Ratio, ":")[1])
+	answers := struct {
+		Name    string
+		Ratio   string
+		CPU     int
+		Memory  int
+		Image   string
+		Zone    string
+		Vxnet   string
+		Keypair string
+	}{}
 
-// 	// transfer
-// 	params = types.RunInstancesRequest{
-// 		InstanceClass: qingtypes.InstanceTypes[answers.Name].Class,
-// 		CPU:           answers.CPU,
-// 		Memory:        answers.CPU * 1024 * ratio,
-// 		ImageID:       answers.Image,
-// 		LoginKeypair:  "kp-2kodyll8",
-// 		LoginMode:     "keypair",
-// 		Zone:          answers.Zone,
-// 		Vxnets:        []string{answers.Vxnet},
-// 	}
+	err := survey.Ask(qs, &answers)
+	if err != nil {
+		logrus.Error(err)
+	}
+	logrus.Debug(answers)
 
-// 	return
-// }
+	// 倍率转换
+	ratio, _ := strconv.Atoi(strings.Split(answers.Ratio, ":")[1])
+
+	// transfer
+	params = types.RunInstancesRequest{
+		InstanceClass: qsOpts[answers.Name].Class,
+		CPU:           answers.CPU,
+		Memory:        answers.CPU * 1024 * ratio,
+		ImageID:       qsImageOpts[answers.Name].Image,
+		LoginKeypair:  "kp-2kodyll8",
+		LoginMode:     "keypair",
+		Zone:          answers.Zone,
+		Vxnets:        []string{answers.Vxnet},
+	}
+
+	return
+}
 
 func customizeVolume(volTypes []types.VolumeType) (params []types.CreateVolumesRequest) {
 

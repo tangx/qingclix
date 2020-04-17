@@ -10,7 +10,7 @@ type Qingtypes struct {
 	ImageTypes    []ImageType    `json:"image_types,omitempty"`
 	Zones         []string       `json:"zones,omitempty"`
 	Vxnets        []string       `json:"vxnets,omitempty"`
-	Keypair       []string       `json:"keypair,omitempty"`
+	Keypairs      []string       `json:"keypairs,omitempty"`
 	Relationship  Relation       `json:"relation,omitempty"`
 }
 
