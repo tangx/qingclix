@@ -76,6 +76,17 @@ func loadQingtypes() (qtypes types.Qingtypes, err error) {
 	return types.LoadQingTypes(data)
 }
 
+// 根据 Instance Class ID 查询 Instance Type ID 值
+func instanceClassToType(class int, instypes []types.InstanceType) (instype string) {
+
+	for _, instype := range instypes {
+		if instype.Class == class {
+			return instype.Type
+		}
+	}
+	return
+}
+
 func customizeConfig() ItemConfig {
 	qingtypes, err := loadQingtypes()
 	if err != nil {
@@ -89,7 +100,14 @@ func customizeConfig() ItemConfig {
 	insPrarms.InstanceName = configure_customize_label
 	logrus.Debug(insPrarms)
 
-	volTypes := qingtypes.VolumeTypes
+	// get instance type
+	instype := instanceClassToType(insPrarms.InstanceClass, qingtypes.InstanceTypes)
+
+	// // get all volumesType
+	// volTypes := qingtypes.VolumeTypes
+	// // get support volumesType
+	volTypes := supportVolumeType(instype, qingtypes.VolumeTypes)
+
 	volsPramas := customizeVolume(volTypes)
 	logrus.Debug(volsPramas)
 
@@ -255,17 +273,38 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 	return
 }
 
+func supportVolumeType(instancetype string, volTypes []types.VolumeType) (support_types []types.VolumeType) {
+
+	var support []int
+	switch instancetype {
+	case "e1", "e2", "p1":
+		support = []int{2, 3, 5, 200}
+
+	case "s1":
+		support = []int{0, 100}
+	}
+
+	for _, v := range support {
+		for _, v2 := range volTypes {
+			if v == v2.Type {
+				support_types = append(support_types, v2)
+			}
+		}
+	}
+	return
+}
+
 func customizeVolume(volTypes []types.VolumeType) (params []types.CreateVolumesRequest) {
 
 	var qsOpts = make(map[string]types.VolumeType)
-	var names []string
+	var volnames []string
 	for _, voltype := range volTypes {
 		tip := fmt.Sprintf("%s -- %s", voltype.Name, voltype.Desc)
 
 		qsOpts[tip] = voltype
-		names = append(names, tip)
+		volnames = append(volnames, tip)
 	}
-	logrus.Debug(names)
+	logrus.Debug(volnames)
 	logrus.Debug(qsOpts)
 
 	answers := struct {
@@ -278,7 +317,7 @@ func customizeVolume(volTypes []types.VolumeType) (params []types.CreateVolumesR
 			Name: "name",
 			Prompt: &survey.Select{
 				Message: "选择磁盘类型",
-				Options: names,
+				Options: volnames,
 			},
 		},
 		{
