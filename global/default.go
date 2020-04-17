@@ -34,10 +34,10 @@ var QingTypes string = `
     ],
     "volume_types":[
         {"name":"性能型","type":0,"desc":""},
-        {"name":"基础型","type":100,"desc":"基础型硬盘是 100 (只能被基础型主机挂载)"},
+        {"name":"基础型","type":100,"desc":"基础型硬盘是 (只能被基础型主机挂载)"},
         {"name":"容量型","type":2,"desc":""},
         {"name":"SSD企业级硬盘","type":200,"desc":"SSD 企业级硬盘是，一般用于 企业e2机器"},
-        {"name":"超高性能型","type":3,"desc":"超高性能型是 3 (只能被超高性能主机挂载)"},
+        {"name":"超高性能型","type":3,"desc":"超高性能型是 (只能被超高性能主机挂载)"},
         {"name":"NeonSAN(企业级分布式SAN)","type":5,"desc":"最好的硬盘，超级贵。(企业级分布式SAN)"}
     ],
     "image_types":[
@@ -46,9 +46,18 @@ var QingTypes string = `
         {"name":"debian9","image":"xeu1843","desc":""},
         {"name":"自定义centos7-kernel5.8","image":"xeu1843","desc":""}
     ],
-    "zones":["pek3d","pek3"],
-    "vxnets":["vxnet-sn2rnad","net1","net2"],
-    "keypair":["key1","key2"],
+    "zones":[
+        {"name":"pek3d","desc":"北京三区D区"},
+        {"name":"pek3c","desc":"北京三区C区"}
+    ],
+    "vxnets":[
+        {"name":"vxnet-sn2rnad","desc":"online"},
+        {"name":"vxnet-xxxxx","desc":"dev"},
+        {"name":"vxnet-yyyyy","desc":"qingxu"}
+    ],
+    "keypairs":[
+        {"name":"key1","desc":"ops公共"}
+    ],
     "relation":{
         "s1":[0,100],
         "e1":[2,3,5,200],

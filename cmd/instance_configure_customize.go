@@ -115,21 +115,50 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 	logrus.Debug(instances)
 
 	// image
-
 	var qsImageOpts = make(map[string]types.ImageType)
 	var images []string
 	for _, imgtype := range qingtypes.ImageTypes {
 		tip := fmt.Sprintf("%s [%s] -- %s", imgtype.Name, imgtype.Image, imgtype.Desc)
 		qsImageOpts[tip] = imgtype
 		images = append(images, tip)
-
 	}
-	logrus.Debug(images)
+	logrus.Debug("images = ", images)
+	logrus.Debug("qsImageOpts = ", qsImageOpts)
+
+	// vxnets
+	var qsVxnetOpts = make(map[string]types.CommonType)
+	var vxnets []string
+	for _, commontype := range qingtypes.Vxnets {
+		tip := fmt.Sprintf("%s -- %s", commontype.Name, commontype.Desc)
+		qsVxnetOpts[tip] = commontype
+		vxnets = append(vxnets, tip)
+	}
+	logrus.Debug(qsVxnetOpts)
+
+	// zones
+	var qsZoneOpts = make(map[string]types.CommonType)
+	var zones []string
+	for _, commontype := range qingtypes.Zones {
+		tip := fmt.Sprintf("%s -- %s", commontype.Name, commontype.Desc)
+		qsZoneOpts[tip] = commontype
+		zones = append(zones, tip)
+	}
+	logrus.Debug(zones)
+
+	// keypairs
+	var qsKeypairOpts = make(map[string]types.CommonType)
+	var keypairs []string
+	for _, commontype := range qingtypes.Keypairs {
+		tip := fmt.Sprintf("%s -- %s", commontype.Name, commontype.Desc)
+		qsKeypairOpts[tip] = commontype
+		keypairs = append(keypairs, tip)
+	}
+	logrus.Debug(keypairs)
 
 	// ask question
 	var qs = []*survey.Question{
 		{
-			Name: "name",
+			Name: "instype",
 			Prompt: &survey.Select{
 				Message: "选择服务器类型",
 				Options: instances,
@@ -156,14 +185,14 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 			Prompt: &survey.Select{
 				Message: "选择操作系统镜像",
 				Options: images,
-				Default: "2",
+				// Default: "2",
 			},
 		},
 		{
 			Name: "zone",
 			Prompt: &survey.Select{
 				Message: "选择可用区",
-				Options: qingtypes.Zones,
+				Options: zones,
 				Default: "pek3d",
 			},
 		},
@@ -171,22 +200,22 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 			Name: "vxnet",
 			Prompt: &survey.Select{
 				Message: "选择可用区",
-				Options: qingtypes.Vxnets,
+				Options: vxnets,
 				Default: "",
 			},
 		},
 		{
 			Name: "keypair",
 			Prompt: &survey.Select{
-				Message: "选择可用区",
-				Options: qingtypes.Keypairs,
+				Message: "选择登录密钥",
+				Options: keypairs,
 				Default: "",
 			},
 		},
 	}
 
 	answers := struct {
-		Name    string
+		Instype string
 		Ratio   string
 		CPU     int
 		Memory  int
@@ -205,16 +234,22 @@ func customizeInstance(qingtypes types.Qingtypes) (params types.RunInstancesRequ
 	// 倍率转换
 	ratio, _ := strconv.Atoi(strings.Split(answers.Ratio, ":")[1])
 
+	// logrus.Error(qsKeypairOpts[answers.Name].Name)
+	// logrus.Error(qsKeypairOpts[answers.Name].Name)
+	// logrus.Error(qsKeypairOpts[answers.Name].Name)
+	// logrus.Error(qsVxnetOpts[answers.Name].Name)
+	// logrus.Error(qsZoneOpts[answers.Name].Name)
+
 	// transfer
 	params = types.RunInstancesRequest{
-		InstanceClass: qsOpts[answers.Name].Class,
+		InstanceClass: qsOpts[answers.Instype].Class,
 		CPU:           answers.CPU,
 		Memory:        answers.CPU * 1024 * ratio,
-		ImageID:       qsImageOpts[answers.Name].Image,
-		LoginKeypair:  "kp-2kodyll8",
+		ImageID:       qsImageOpts[answers.Image].Image,
+		LoginKeypair:  qsKeypairOpts[answers.Keypair].Name,
 		LoginMode:     "keypair",
-		Zone:          answers.Zone,
-		Vxnets:        []string{answers.Vxnet},
+		Zone:          qsZoneOpts[answers.Zone].Name,
+		Vxnets:        []string{qsVxnetOpts[answers.Vxnet].Name},
 	}
 
 	return

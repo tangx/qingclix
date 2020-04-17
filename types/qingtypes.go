@@ -8,10 +8,15 @@ type Qingtypes struct {
 	InstanceTypes []InstanceType `json:"instance_types,omitempty"`
 	VolumeTypes   []VolumeType   `json:"volume_types,omitempty"`
 	ImageTypes    []ImageType    `json:"image_types,omitempty"`
-	Zones         []string       `json:"zones,omitempty"`
-	Vxnets        []string       `json:"vxnets,omitempty"`
-	Keypairs      []string       `json:"keypairs,omitempty"`
+	Zones         []CommonType   `json:"zones,omitempty"`
+	Vxnets        []CommonType   `json:"vxnets,omitempty"`
+	Keypairs      []CommonType   `json:"keypairs,omitempty"`
 	Relationship  Relation       `json:"relation,omitempty"`
+}
+
+type CommonType struct {
+	Name string `json:"name,omitempty"`
+	Desc string `json:"desc,omitempty"`
 }
 
 type ImageType struct {
