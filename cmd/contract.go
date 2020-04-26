@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/types"
 )
@@ -88,5 +89,10 @@ func DetachResourceContract(cli types.Client, resource string, contract string) 
 		Contract:  contract,
 		Resources: []string{resource},
 	}
-	cli.DissociateReservedContract(params)
+	_, err := cli.DissociateReservedContract(params)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	logrus.Infof("资源[%s] 与 合约 [%s] 解绑成功", resource, contract)
 }
