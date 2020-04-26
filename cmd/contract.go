@@ -38,7 +38,6 @@ to quickly create a Cobra application.`,
 var (
 	detach_instace_with_volume bool = false
 	detach_instance            string
-	detach_config              string
 )
 
 func init() {
@@ -54,7 +53,10 @@ func init() {
 func DetachMain() {
 	cli := types.Client{}
 
-	DetachInstance(cli, detach_instance)
+	if detach_instance != "" {
+		DetachInstance(cli, detach_instance)
+	}
+
 }
 
 func DetachInstance(cli types.Client, instance string) {
