@@ -168,3 +168,19 @@ func Test_DescribeContracts(t *testing.T) {
 	}
 	cli.DescribeReservedContracts(params)
 }
+
+func Test_DissociateReservedContractRequest(t *testing.T) {
+	DebugLevelMode()
+	cli := Client{}
+	contract := "rc-pTOGIxFs"
+	instance := "i-5xlu9gue"
+
+	params := DissociateReservedContractRequest{
+		Contract:  contract,
+		Resources: []string{instance},
+	}
+	resp, _ := cli.DissociateReservedContract(params)
+	if resp.RetCode != 0 {
+		logrus.Fatal(resp.Message)
+	}
+}

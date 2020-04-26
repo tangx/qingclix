@@ -123,3 +123,23 @@ func (cli *Client) DescribeReservedContracts(params DescribeReservedContractsReq
 	err = cli.Get("DescribeReservedContracts", params, &resp)
 	return
 }
+
+// 	解绑合约
+type DissociateReservedContractRequest struct {
+	Contract  string   `url:"contract,omitempty"`
+	Resources []string `url:"resources,omitempty,dotnumbered,numbered1"`
+}
+
+// {"action":"DissociateReservedContractResponse","changed":["i-5xlu9gue"],"ret_code":0}
+
+type DissociateReservedContractResponse struct {
+	Action  string   `json:"action,omitempty"`
+	Changed []string `json:"changed,omitempty"`
+	RetCode int      `json:"ret_code,omitempty"`
+	Message string   `json:"message,omitempty"`
+}
+
+func (cli *Client) DissociateReservedContract(params DissociateReservedContractRequest) (resp DissociateReservedContractResponse, err error) {
+	err = cli.Get("DissociateReservedContract", params, &resp)
+	return
+}
