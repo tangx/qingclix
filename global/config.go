@@ -8,6 +8,11 @@ import (
 )
 
 var (
-	authFile = fmt.Sprintf("%s/.qingcloud/config.yaml", os.Getenv("HOME"))
-	Clix     = qingyun.NewWithFile(authFile)
+	AuthFile = fmt.Sprintf("%s/.qingcloud/config.yaml", os.Getenv("HOME"))
+
+	ConfigFile = fmt.Sprintf("%s/.qingclix/config.json", os.Getenv("HOME"))
+)
+
+var (
+	QingClix = qingyun.NewWithFile(AuthFile)
 )

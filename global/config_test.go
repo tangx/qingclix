@@ -9,7 +9,7 @@ import (
 
 func Test_Clix(t *testing.T) {
 	params := qingyun.DescribeZonesRequest{}
-	resp, err := Clix.DescribeZones(params)
+	resp, err := QingClix.DescribeZones(params)
 
 	if err != nil {
 		panic(err)
