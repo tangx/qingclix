@@ -10,6 +10,7 @@ import (
 	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/modules"
 	"github.com/tangx/qingclix/utils"
+	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 // configureCmd represents the configure command
@@ -142,4 +143,31 @@ func LoadConfig() (config ClixConfig) {
 	}
 
 	return config
+}
+
+func chooseItem() ClixItem {
+
+	config := LoadConfig()
+
+	opts := []string{}
+	for k := range config.Configs {
+		opts = append(opts, k)
+	}
+
+	name := ""
+	qs := &survey.Select{
+		Message: "choose a item name:",
+		Options: opts,
+	}
+	err := survey.AskOne(qs, &name, nil)
+	if err != nil {
+		logrus.Fatalf("%s", err)
+	}
+
+	if name == "" {
+		return ClixItem{}
+	}
+
+	return config.Configs[name]
+
 }
