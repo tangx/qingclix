@@ -16,3 +16,26 @@ func DescContract(id string) qingyun.DescribeReservedContractsResponse {
 	}
 	return resp
 }
+
+func CreateContract() {
+	// apply
+	// lease
+	// associate
+}
+
+func ApplyContractWithResources(params qingyun.ApplyReservedContractWithResourcesRequest) (contractID string) {
+
+	if params.AutoRenew == 1 {
+		params.Months = 1
+	}
+
+	resp, err := global.QingClix.ApplyReservedContractWithResources(params)
+	if err != nil {
+		logrus.Errorf("%s", err)
+	}
+
+	return resp.ContractID
+}
+
+func LeaseContract()     {}
+func AssociateContract() {}
