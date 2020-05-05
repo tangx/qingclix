@@ -49,13 +49,24 @@ func InstanceStatus(instanceID string) string {
 
 }
 
-func CheckInstanceStatus(instanceID string, status string) error {
-	for i := 1; i <= 20; i++ {
-		if status != InstanceStatus(instanceID) {
+func CheckInstanceStatus(instID string, status string) (err error) {
+	// fmt.Printf("Check %s is or not in %s status: .", instID, status)
+	// defer func() {
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	} else {
+	// 		fmt.Println("true")
+	// 	}
+	// }()
+
+	for i := 1; i <= 60; i++ {
+		if status != InstanceStatus(instID) {
+			fmt.Printf(".")
 			time.Sleep(1 * time.Second)
 			continue
 		}
 		return nil
 	}
-	return fmt.Errorf("Check status Failed or not Match")
+	err = fmt.Errorf("Check status Failed or not Match")
+	return err
 }
