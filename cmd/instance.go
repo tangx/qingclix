@@ -55,10 +55,14 @@ func LaunchMain() {
 			VolumeName: fmt.Sprintf("%s-%d", instParams.InstanceName, i),
 			VolumeType: v.VolumeType,
 			Size:       v.Size,
+			Zone:       item.Instance.Zone,
 		}
 		vol, _ := modules.CreateVolume(params)
 		vols = append(vols, vol)
 	}
 
 	// attach
+	for _, vol := range vols {
+		modules.AttachVolume(instID, vol)
+	}
 }
