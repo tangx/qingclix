@@ -112,6 +112,8 @@ github.com/tangx/qingyun-sdk-go v1.1.0 h1:KiL98pNgyPO3XIA4QZvQixUBTf+rTnPQTKY+TB
 github.com/tangx/qingyun-sdk-go v1.1.0/go.mod h1:ffosUOR9+yzTzmIyBlnIZnHJttu6LaYst5ux26NzALk=
 github.com/tangx/qingyun-sdk-go v1.1.1 h1:rtTKdTBp5f9u7c0ox0ykGk2vyuBLbHezNx3rfCUqudw=
 github.com/tangx/qingyun-sdk-go v1.1.1/go.mod h1:ffosUOR9+yzTzmIyBlnIZnHJttu6LaYst5ux26NzALk=
+github.com/tangx/qingyun-sdk-go v1.1.2 h1:3O0ST7h0Amz+QqLoCwFsAdlwtyEjC0yDbiWfdKYXh0A=
+github.com/tangx/qingyun-sdk-go v1.1.2/go.mod h1:ffosUOR9+yzTzmIyBlnIZnHJttu6LaYst5ux26NzALk=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=

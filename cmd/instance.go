@@ -40,6 +40,9 @@ func LaunchMain() {
 	item := chooseItem()
 
 	// run instance
+
+	// struct 强制类型转换 ， 此处不可用 :
+	// https://www.cnblogs.com/hitfire/articles/6363696.html
 	// instParams := (*qingyun.RunInstancesRequest)(unsafe.Pointer(&item.Instance))
 
 	instParams := qingyun.RunInstancesRequest{
@@ -52,6 +55,7 @@ func LaunchMain() {
 		LoginKeypair:  item.Instance.LoginKeypair,
 		Zone:          item.Instance.Zone,
 		Vxnets:        item.Instance.Vxnets,
+		OsDiskSize:    item.Instance.OsDiskSize,
 	}
 	instID := modules.RunInstance(instParams)
 	logrus.Debugf("New instance id = %s", instID)
