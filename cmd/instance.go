@@ -81,4 +81,10 @@ func LaunchMain() {
 	for _, vol := range vols {
 		modules.AttachVolume(instID, vol)
 	}
+
+	// contract apply,lease and associate
+	modules.CreateContract(instID, item.Contract.AutoRenew, item.Contract.Months, item.Instance.Zone)
+	for _, vol := range vols {
+		modules.CreateContract(vol, item.Contract.AutoRenew, item.Contract.Months, item.Instance.Zone)
+	}
 }
