@@ -20,4 +20,5 @@ var (
 // global Flags
 var (
 	SkipContract bool
+	Verbose      int
 )
