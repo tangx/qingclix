@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"sync"
 
+	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/modules"
@@ -44,26 +46,33 @@ func init() {
 
 }
 
+var wg sync.WaitGroup
+
 func LaunchMain() {
 
 	item := chooseItem()
 
 	instName := item.Instance.InstanceName
-
 	for i := 0; i < instance_count; i++ {
+		wg.Add(1)
+
 		if i == 0 {
 			item.Instance.InstanceName = instName + fmt.Sprintf("-%d", start_with)
 		} else {
 			item.Instance.InstanceName = instName + fmt.Sprintf("-%d", i+start_with)
 		}
 
-		logrus.Infoln(item.Instance.InstanceName)
-		runInstance(item)
+		go runInstance(item)
 	}
+	wg.Wait()
 }
 
 func runInstance(item ClixItem) {
-	// run instance
+	defer wg.Done()
+
+	logrus.WithFields(logrus.Fields{
+		"ClixJobID": uuid.NewV4().String(),
+	}).Infof("Create Instance :%s", item.Instance.InstanceName)
 
 	// struct 强制类型转换 ， 此处不可用 :
 	// https://www.cnblogs.com/hitfire/articles/6363696.html
