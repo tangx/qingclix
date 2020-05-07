@@ -16,3 +16,8 @@ var (
 var (
 	QingClix = qingyun.NewWithFile(AuthFile)
 )
+
+// global Flags
+var (
+	SkipContract bool
+)

@@ -18,6 +18,12 @@ func DescContract(id string) qingyun.DescribeReservedContractsResponse {
 }
 
 func CreateContract(resource string, autorenew int, months int, zone string) (contractID string) {
+	// 强行略过合约购买
+	if global.SkipContract {
+		logrus.Info("Skip contract apply")
+		return ""
+	}
+
 	if autorenew == 1 {
 		months = 1
 	}

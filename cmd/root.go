@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/tangx/qingclix/global"
 )
 
 // rootCmd represents the root command
@@ -22,4 +23,8 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func init() {
+	rootCmd.PersistentFlags().BoolVarP(&global.SkipContract, "skip-contract", "", false, "强制跳过合约购买")
 }
