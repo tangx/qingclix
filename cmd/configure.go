@@ -59,16 +59,6 @@ func cloneInstance() {
 	}
 
 	ins := insResp.InstanceSet[0]
-	// instance
-	// item.Instance.InstanceClass = ins.InstanceClass
-	// item.Instance.InstanceName = ins.InstanceName + "_clone"
-	// item.Instance.ImageID = ins.Image.ImageID
-	// item.Instance.CPU = ins.VcpusCurrent
-	// item.Instance.Memory = ins.MemoryCurrent
-	// item.Instance.LoginMode = "keypair"
-	// item.Instance.LoginKeypair = ins.KeypairIDS[0]
-	// item.Instance.Zone = ins.ZoneID
-	// item.Instance.OsDiskSize = ins.Extra.OSDiskSize
 
 	item.Instance = Instance{
 		InstanceClass: ins.InstanceClass,
