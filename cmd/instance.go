@@ -7,6 +7,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/tangx/qingclix/cmd/configure"
 	"github.com/tangx/qingclix/modules"
 	"github.com/tangx/qingyun-sdk-go/qingyun"
 )
@@ -50,7 +51,7 @@ var wg sync.WaitGroup
 
 func LaunchMain() {
 
-	item := chooseItem()
+	item := configure.ChooseItem()
 
 	instName := item.Instance.InstanceName
 	for i := 0; i < instance_count; i++ {
@@ -67,7 +68,7 @@ func LaunchMain() {
 	wg.Wait()
 }
 
-func runInstance(item ClixItem) {
+func runInstance(item configure.ClixItem) {
 	defer wg.Done()
 
 	logrus.WithFields(logrus.Fields{
