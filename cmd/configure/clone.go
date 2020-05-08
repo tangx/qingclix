@@ -1,8 +1,36 @@
 package configure
 
 import (
+	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/modules"
 )
+
+var CloneCmd = &cobra.Command{
+	Use:   "clone",
+	Short: "A brief description of your command",
+	Long:  `A longer description that spans multiple lines and likely contains examples`,
+	Run: func(cmd *cobra.Command, args []string) {
+		cloneMain()
+	},
+}
+
+var (
+	instance_target string
+)
+
+func init() {
+	CloneCmd.Flags().StringVarP(&instance_target, "instance", "i", "", "target instance to clone")
+}
+
+func cloneMain() {
+	if instance_target == "" {
+		return
+	}
+	item := CloneInstance(instance_target)
+
+	config := AddItem(item.Instance.InstanceName, item)
+	DumpConfig(config)
+}
 
 func CloneInstance(target string) (item ClixItem) {
 
