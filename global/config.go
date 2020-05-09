@@ -11,6 +11,8 @@ var (
 	AuthFile = fmt.Sprintf("%s/.qingcloud/config.yaml", os.Getenv("HOME"))
 
 	ConfigFile = fmt.Sprintf("%s/.qingclix/config.json", os.Getenv("HOME"))
+
+	QingtypesFile = fmt.Sprintf("%s/.qingclix/qingtypes.json", os.Getenv("HOME"))
 )
 
 var (
