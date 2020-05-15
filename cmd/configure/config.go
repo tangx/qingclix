@@ -36,7 +36,10 @@ type ItemInstance struct {
 	InstanceName  string   `json:"instance_name,omitempty" url:"instance_name,omitempty"`
 	Zone          string   `json:"zone,omitempty" url:"zone,omitempty"`
 	Vxnets        []string `json:"vxnets,omitempty" url:"vxnets,omitempty"`
-	OsDiskSize    int      `json:"os_disk_size,omitempty"`
+	OsDiskSize    int      `json:"os_disk_size,omitempty" url:"os_disk_size,omitempty"`
+	GPU           int      `json:"gpu,omitempty" url:"gpu,omitempty"`
+	GpuClass      int      `json:"gpu_class,omitempty" url:"gpu_class,omitempty"`
+	CpuModel      string   `json:"cpu_model,omitempty" url:"cpu_model,omitempty"`
 }
 
 type ItemVolume struct {
