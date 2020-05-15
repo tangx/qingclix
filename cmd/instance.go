@@ -63,13 +63,18 @@ func LaunchMain() {
 			item.Instance.InstanceName = instName + fmt.Sprintf("-%d", i+start_with)
 		}
 
-		go runInstance(item)
+		go RunInstance(item)
 	}
 	wg.Wait()
 }
 
 func runInstance(item configure.ClixItem) {
 	defer wg.Done()
+
+	RunInstance(item)
+}
+
+func RunInstance(item configure.ClixItem) {
 
 	logrus.WithFields(logrus.Fields{
 		"ClixJobID": uuid.NewV4().String(),
