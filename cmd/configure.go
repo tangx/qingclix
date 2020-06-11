@@ -8,8 +8,7 @@ import (
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
-	Short: "A brief description of your command",
-	Long:  `A longer description that spans multiple lines and likely contains examples`,
+	Short: "配置管理",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
