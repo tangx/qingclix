@@ -69,12 +69,11 @@ func LaunchMain() {
 }
 
 func runInstance(item configure.ClixItem) {
-	defer wg.Done()
-
 	RunInstance(item)
 }
 
 func RunInstance(item configure.ClixItem) {
+	defer wg.Done()
 
 	logrus.WithFields(logrus.Fields{
 		"ClixJobID": uuid.NewV4().String(),
