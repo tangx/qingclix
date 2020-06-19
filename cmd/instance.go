@@ -94,6 +94,8 @@ func RunInstance(item configure.ClixItem) {
 		Zone:          item.Instance.Zone,
 		Vxnets:        item.Instance.Vxnets,
 		OsDiskSize:    item.Instance.OsDiskSize,
+		GPU:           item.Instance.GPU,
+		GpuClass:      item.Instance.GpuClass,
 	}
 	instID := modules.RunInstance(instParams)
 	logrus.Debugf("New instance id = %s", instID)

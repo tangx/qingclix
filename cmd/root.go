@@ -13,7 +13,8 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "qingclix",
 	Short: "一个青云简单的命令行工具",
-	Long:  `A longer description that spans multiple lines and likely contains examples`,
+	Long: `一个青云简单的命令行工具
+version: ` + global.Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		initLogrusLevel()
 	},
