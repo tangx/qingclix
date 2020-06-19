@@ -7,8 +7,8 @@ import (
 
 var CloneCmd = &cobra.Command{
 	Use:   "clone",
-	Short: "A brief description of your command",
-	Long:  `A longer description that spans multiple lines and likely contains examples`,
+	Short: "clone配置",
+	Long:  `克隆制定服务器实例的配置`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cloneMain()
 	},
@@ -53,6 +53,9 @@ func CloneInstance(target string) (item ClixItem) {
 		LoginKeypair:  ins.KeypairIDS[0],
 		Zone:          ins.ZoneID,
 		OsDiskSize:    ins.Extra.OSDiskSize,
+		CPUModel:      ins.Extra.CPUModel,
+		GPU:           ins.Extra.GPU,
+		GPUClass:      ins.Extra.GPUClass,
 	}
 
 	for _, vxnet := range ins.Vxnets {

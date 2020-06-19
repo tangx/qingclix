@@ -38,8 +38,8 @@ type ItemInstance struct {
 	Vxnets        []string `json:"vxnets,omitempty" url:"vxnets,omitempty"`
 	OsDiskSize    int      `json:"os_disk_size,omitempty" url:"os_disk_size,omitempty"`
 	GPU           int      `json:"gpu,omitempty" url:"gpu,omitempty"`
-	GpuClass      int      `json:"gpu_class,omitempty" url:"gpu_class,omitempty"`
-	CpuModel      string   `json:"cpu_model,omitempty" url:"cpu_model,omitempty"`
+	GPUClass      int      `json:"gpu_class,omitempty" url:"gpu_class,omitempty"`
+	CPUModel      string   `json:"cpu_model,omitempty" url:"cpu_model,omitempty"`
 }
 
 type ItemVolume struct {
