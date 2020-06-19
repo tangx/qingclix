@@ -88,6 +88,7 @@ func RunInstance(item configure.ClixItem) {
 		InstanceName:  item.Instance.InstanceName,
 		InstanceClass: item.Instance.InstanceClass,
 		CPU:           item.Instance.CPU,
+		CpuModel:      item.Instance.CpuModel,
 		Memory:        item.Instance.Memory,
 		LoginMode:     item.Instance.LoginMode,
 		LoginKeypair:  item.Instance.LoginKeypair,
