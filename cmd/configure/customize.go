@@ -1,13 +1,9 @@
 package configure
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/tangx/qingclix/global"
 )
 
 // CustomizeCmd represents the customize command
@@ -56,29 +52,4 @@ type VolumeType struct {
 	Name string `json:"name"`
 	Type int    `json:"type"`
 	Desc string `json:"desc"`
-}
-
-func loadQingtypesConfig() (qingtypes Qingtypes) {
-
-	data, err := ioutil.ReadFile(global.QingtypesFile)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	err = json.Unmarshal(data, &qingtypes)
-	if err != nil {
-		logrus.Fatal(err)
-
-	}
-
-	return
-}
-
-func customize() (item ClixItem) {
-	qingtypes := loadQingtypesConfig()
-
-	logrus.Debug(qingtypes)
-
-	// ask instance
-	return
 }
