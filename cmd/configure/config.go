@@ -55,7 +55,7 @@ func DumpConfig(config ClixConfig) {
 	}
 
 	if ok, _ := utils.PathExists(global.ConfigFile); !ok {
-		utils.MkdirAll(path.Dir(global.ConfigFile))
+		_, _ = utils.MkdirAll(path.Dir(global.ConfigFile))
 	}
 	err = ioutil.WriteFile(global.ConfigFile, data, 0644)
 	if err != nil {
@@ -75,7 +75,7 @@ func LoadConfig() (config ClixConfig) {
 		logrus.Fatalf("%s", err)
 	}
 	if !ok {
-		utils.MkdirAll(path.Dir(global.ConfigFile))
+		_, _ = utils.MkdirAll(path.Dir(global.ConfigFile))
 		return
 	}
 

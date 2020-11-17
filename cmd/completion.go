@@ -21,7 +21,7 @@ var completionCmdBash = &cobra.Command{
 	Short: "生成 bash 补全",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		rootCmd.GenBashCompletion(os.Stdout)
+		_ = rootCmd.GenBashCompletion(os.Stdout)
 	},
 }
 
@@ -30,7 +30,7 @@ var completionCmdZsh = &cobra.Command{
 	Short: "生成 zsh 补全",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		rootCmd.GenZshCompletion(os.Stdout)
+		_ = rootCmd.GenZshCompletion(os.Stdout)
 	},
 }
 

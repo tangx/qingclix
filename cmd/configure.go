@@ -10,7 +10,7 @@ var configureCmd = &cobra.Command{
 	Use:   "configure",
 	Short: "配置管理",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

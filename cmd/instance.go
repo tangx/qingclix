@@ -19,7 +19,7 @@ var instanceCmd = &cobra.Command{
 	Long: `A longer description that spans multiple lines and likely contains examples
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 
@@ -66,10 +66,6 @@ func LaunchMain() {
 		go RunInstance(item)
 	}
 	wg.Wait()
-}
-
-func runInstance(item configure.ClixItem) {
-	RunInstance(item)
 }
 
 func RunInstance(item configure.ClixItem) {
@@ -126,7 +122,7 @@ func RunInstance(item configure.ClixItem) {
 
 	// attach
 	for _, vol := range vols {
-		modules.AttachVolume(instID, vol)
+		_ = modules.AttachVolume(instID, vol)
 	}
 
 	// contract apply,lease and associate
