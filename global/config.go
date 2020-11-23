@@ -31,3 +31,12 @@ var (
 	CertKey  string
 	CertName string
 )
+
+var (
+	BindingListener string
+	BindingCerts    string
+)
+
+var (
+	WithUpdateLB bool
+)

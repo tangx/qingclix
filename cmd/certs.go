@@ -22,9 +22,9 @@ var certCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(certCmd)
 	certCmd.AddCommand(certCmdCreate)
-	certCmd.AddCommand(certCmdAssociateToLB)
+	certCmd.AddCommand(certCmdAssociateToLBListener)
 	certCmd.AddCommand(certCmdDelete)
-	certCmd.AddCommand(certCmdDisassociteFromLB)
+	certCmd.AddCommand(certCmdDisassociteFromLBListener)
 
 }
 
@@ -55,15 +55,21 @@ var certCmdDelete = &cobra.Command{
 	},
 }
 
-var certCmdAssociateToLB = &cobra.Command{
+var certCmdAssociateToLBListener = &cobra.Command{
 	Use:   "bind",
 	Short: "绑定证书到 SLB",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("bind server certificate")
+		_ = modules.BindCertsToLBListener(global.BindingCerts, global.BindingListener)
+		// todo: bind and update
 	},
 }
 
-var certCmdDisassociteFromLB = &cobra.Command{
+func init() {
+	certCmdAssociateToLBListener.Flags().StringVarP(&global.BindingListener, "lbl", "", "", "LB Listener to binding")
+	certCmdAssociateToLBListener.Flags().StringVarP(&global.BindingCerts, "sc", "", "", "Certificate is binding to LBL")
+}
+
+var certCmdDisassociteFromLBListener = &cobra.Command{
 	Use:   "unbind",
 	Short: "DisAssocite Certs from Lb listener",
 	Run: func(cmd *cobra.Command, args []string) {
