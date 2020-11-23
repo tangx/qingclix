@@ -33,12 +33,13 @@ var (
 )
 
 var (
-	BindingListener string
-	BindingCerts    string
+	BindingLB         string
+	BindingLBListener string
+	BindingCerts      string
 )
 
 var (
-	WithUpdateLB bool
+	SkipUpdateLB bool
 )
 
 var (
