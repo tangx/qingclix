@@ -40,3 +40,7 @@ var (
 var (
 	WithUpdateLB bool
 )
+
+var (
+	Loadbalancers string
+)
