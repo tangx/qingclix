@@ -24,3 +24,10 @@ var (
 	SkipContract bool
 	Verbose      int
 )
+
+// Certs
+var (
+	CertCrt  string
+	CertKey  string
+	CertName string
+)
