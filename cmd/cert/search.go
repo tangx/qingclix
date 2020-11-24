@@ -10,10 +10,6 @@ var CertCmdSearch = &cobra.Command{
 	Use:   "search",
 	Short: "通过",
 	Run: func(cmd *cobra.Command, args []string) {
-		if global.CertName == "" {
-			_ = cmd.Help()
-		}
-
 		search()
 	},
 }
