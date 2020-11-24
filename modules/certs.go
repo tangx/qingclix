@@ -100,3 +100,26 @@ func SearchCertByName(name string) map[string]string {
 	}
 	return certs
 }
+
+func GetCertBindToLbl(sc string) (m map[string][]string) {
+
+	m = make(map[string][]string)
+	resp := DescribeOneCertByID(sc)
+
+	if len(resp.ServerCertificateSet) != 1 {
+		return
+	}
+
+	for _, lbl := range resp.ServerCertificateSet[0].LoadbalancerListeners {
+		lblID := lbl.LoadbalancerListenerID
+		lbID := lbl.LoadbalancerID
+
+		logrus.Printf("Cert(%s) is binding to LBL(%s) in LB(%s)\n", sc, lblID, lbID)
+		if len(m[lbID]) == 0 {
+			m[lbID] = []string{lblID}
+		} else {
+			m[lbID] = append(m[lbID], lblID)
+		}
+	}
+	return
+}

@@ -27,3 +27,8 @@ func Test_SearchCertByName(t *testing.T) {
 	certs := SearchCertByName("wild")
 	spew.Dump(certs)
 }
+
+func Test_GetCertBindToLbl(t *testing.T) {
+	m := GetCertBindToLbl("sc-0j6zpvru")
+	spew.Dump(m)
+}
