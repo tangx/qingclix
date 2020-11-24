@@ -33,9 +33,9 @@ var (
 )
 
 var (
-	BindingLB         string
-	BindingLBListener string
-	BindingCerts      string
+	LoadBalanceID string
+	LBListenerID  string
+	CertIDs       string
 )
 
 var (
@@ -43,5 +43,5 @@ var (
 )
 
 var (
-	Loadbalancers string
+	LoadBalancerIDs string
 )

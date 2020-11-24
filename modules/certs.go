@@ -35,7 +35,25 @@ func CreateCertficate(name string, keypath string, crtpath string) (id string) {
 
 	fmt.Printf(`{"certid":"%s"}\n`, resp.ServerCertificateID)
 	return resp.ServerCertificateID
+}
 
+func DeleteCertficate(certs string) (ok bool) {
+	scs := strings.Split(certs, ",")
+	params := qingyun.DeleteServerCertificatesRequest{
+		ServerCertificates: scs,
+	}
+
+	resp, err := global.QingClix.DeleteCertificates(params)
+	if err != nil {
+		logrus.Fatalln(err.Error())
+		return false
+	}
+
+	if resp.RetCode == 0 {
+		logrus.Infof("success: deleting certs jobid= %s", resp.JobID)
+		return true
+	}
+	return false
 }
 
 // BindCertsToLBListener assicoate one or more certificate file to a LB listener

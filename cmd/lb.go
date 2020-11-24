@@ -26,15 +26,15 @@ var lbCmdUpdate = &cobra.Command{
 	Use:   "update",
 	Short: "更新负载均衡配置",
 	Run: func(cmd *cobra.Command, args []string) {
-		if global.Loadbalancers == "" {
+		if global.LoadBalancerIDs == "" {
 			_ = cmd.Help()
 			os.Exit(1)
 		}
-		modules.UpdateLoadBalancers(global.Loadbalancers)
+		modules.UpdateLoadBalancers(global.LoadBalancerIDs)
 	},
 }
 
 func init() {
 	lbCmd.AddCommand(lbCmdUpdate)
-	lbCmdUpdate.Flags().StringVarP(&global.Loadbalancers, "lb", "", "", "Loadbalances , split with comma (ex lb-123,lb-223)")
+	lbCmdUpdate.Flags().StringVarP(&global.LoadBalancerIDs, "lb", "", "", "Loadbalances , split with comma (ex lb-123,lb-223)")
 }

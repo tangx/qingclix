@@ -31,7 +31,7 @@ func Test_DescribeOneCertByID(t *testing.T) {
 }
 
 func Test_SearchCertByName(t *testing.T) {
-	certs := SearchCertByName("wild")
+	certs := SearchCertByName("tangxin")
 	spew.Dump(certs)
 }
 
