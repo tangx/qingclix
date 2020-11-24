@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tangx/qingyun-sdk-go/qingyun"
+	"github.com/tangx/qingclix/sdk-go/qingyun"
 )
 
 var (

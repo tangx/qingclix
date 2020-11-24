@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/cmd/configure"
 	"github.com/tangx/qingclix/modules"
-	"github.com/tangx/qingyun-sdk-go/qingyun"
+	"github.com/tangx/qingclix/sdk-go/qingyun"
 )
 
 // instanceCmd represents the launch command

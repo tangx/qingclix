@@ -5,7 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/tangx/qingclix/global"
-	"github.com/tangx/qingyun-sdk-go/qingyun"
+	"github.com/tangx/qingclix/sdk-go/qingyun"
 )
 
 func UpdateLoadBalancers(lbIDs string) bool {

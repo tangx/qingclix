@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tangx/qingyun-sdk-go/qingyun"
+	"github.com/tangx/qingclix/sdk-go/qingyun"
 )
 
 func Test_Clix(t *testing.T) {
