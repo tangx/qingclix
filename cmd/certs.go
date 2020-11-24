@@ -64,7 +64,7 @@ var certCmdAssociateToLBListener = &cobra.Command{
 
 		// 2. bind and update
 		// 2.1. get lb by lb
-		lb := modules.GetLbByLbl(global.BindingLBListener)
+		lb := modules.GetLbByLblID(global.BindingLBListener)
 		// 2.2. update lb
 		if (ok && len(lb) != 0) && !global.SkipUpdateLB {
 			modules.UpdateLoadBalancers(lb)
@@ -83,7 +83,7 @@ var certCmdDisassociteFromLBListener = &cobra.Command{
 	Short: "DisAssocite Certs from Lb listener",
 	Run: func(cmd *cobra.Command, args []string) {
 		ok := modules.UnbindCertsFromLBListener(global.BindingCerts, global.BindingLBListener)
-		lb := modules.GetLbByLbl(global.BindingLBListener)
+		lb := modules.GetLbByLblID(global.BindingLBListener)
 		if (ok && len(lb) != 0) && !global.SkipUpdateLB {
 			modules.UpdateLoadBalancers(lb)
 		}

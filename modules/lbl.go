@@ -11,7 +11,7 @@ import (
 // DescribeLBL return which LoadBalance is belong to
 // only accept one lbl as argument at once
 func DescribeLBL(lbl string) (resp qingyun.DescribeLoadBalancerListenersResponse) {
-	lbls := strings.Split(lbl, "")
+	lbls := strings.Split(lbl, ",")
 	params := qingyun.DescribeLoadBalancerListenersRequest{
 		LoadbalancerListeners: lbls,
 		Verbose:               1,
@@ -25,13 +25,21 @@ func DescribeLBL(lbl string) (resp qingyun.DescribeLoadBalancerListenersResponse
 	return
 }
 
-func GetLbByLbl(lbl string) (lb string) {
-	resp := DescribeLBL(lbl)
-	if len(resp.LoadBalanceListenerSet) == 1 {
-		lb = resp.LoadBalanceListenerSet[0].LoadbalancerID
-		// logrus.Printf("https://console.qingcloud.com/%s/loadbalancers/loadbalancers/%s/", zone, lb)
-		return
+func GetLbByLblID(lbls string) string {
+
+	m := make(map[string]int)
+	resp := DescribeLBL(lbls)
+
+	if len(resp.LoadBalanceListenerSet) > 0 {
+		for _, lbl := range resp.LoadBalanceListenerSet {
+			m[lbl.LoadbalancerID] = 0
+		}
 	}
 
-	return
+	ml := []string{}
+	for k := range m {
+		ml = append(ml, k)
+	}
+
+	return strings.Join(ml, ",")
 }
