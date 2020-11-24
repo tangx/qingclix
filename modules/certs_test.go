@@ -3,6 +3,7 @@ package modules
 import (
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	. "github.com/onsi/gomega"
 )
 
@@ -13,4 +14,16 @@ func Test_BindCerts(t *testing.T) {
 
 		NewWithT(t).Expect(ok).Should(BeTrue())
 	})
+
+}
+
+func Test_DescribeOneCertByID(t *testing.T) {
+
+	resp := DescribeOneCertByID("sc-0j6zpvru")
+	spew.Dump(resp)
+}
+
+func Test_SearchCertByName(t *testing.T) {
+	certs := SearchCertByName("wild")
+	spew.Dump(certs)
 }

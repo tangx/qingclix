@@ -60,3 +60,43 @@ func BindCertsToLBListener(certsIDs string, lblID string) bool {
 	return false
 
 }
+
+// DescribeOneCertByID return Certs info
+func DescribeOneCertByID(sc string) (resp qingyun.DescribeCertsResponse) {
+	scs := []string{sc}
+	fmt.Println(scs)
+	params := qingyun.DescribeCertsRequest{
+		ServerCertificates: scs,
+		Verbose:            1,
+	}
+
+	resp, err := global.QingClix.DescribeCerts(params)
+	if err != nil {
+		logrus.Fatalln(err.Error())
+	}
+
+	if len(resp.ServerCertificateSet) == 1 {
+		return
+	}
+	return
+}
+
+func SearchCertByName(name string) map[string]string {
+	params := qingyun.DescribeCertsRequest{
+		SearchWord: name,
+	}
+	resp, err := global.QingClix.DescribeCerts(params)
+	if err != nil {
+		logrus.Fatalln(err.Error())
+	}
+
+	certs := map[string]string{}
+	for _, cert := range resp.ServerCertificateSet {
+		name := cert.ServerCertificateName
+		id := cert.ServerCertificateID
+
+		logrus.Debugf("%s : %s", name, id)
+		certs[name] = id
+	}
+	return certs
+}

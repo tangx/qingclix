@@ -218,6 +218,8 @@ github.com/tangx/qingyun-sdk-go v1.2.6 h1:SiA1H0XhZHixbRZch4OdNKqrI6WUtms+5GXVi+
 github.com/tangx/qingyun-sdk-go v1.2.6/go.mod h1:M6XaHXHlTgEZz5lt4O05/z/b9/RlEG+BTn9zWAwkyN4=
 github.com/tangx/qingyun-sdk-go v1.3.0 h1:kg8UFehZK8McMEJw3kV4DOjIFyRpn8j8dw+p61s+KX4=
 github.com/tangx/qingyun-sdk-go v1.3.0/go.mod h1:pGqgp7kRRadlPfdVuPfboXHsYzbtBRrTVsX3zIxaR18=
+github.com/tangx/qingyun-sdk-go v1.3.1 h1:1pd3r3FyhTL2npu+xH9AGRB7D2m6QMLxzbKKspf7LkY=
+github.com/tangx/qingyun-sdk-go v1.3.1/go.mod h1:pGqgp7kRRadlPfdVuPfboXHsYzbtBRrTVsX3zIxaR18=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
