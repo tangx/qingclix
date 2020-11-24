@@ -56,7 +56,7 @@ var certCmdDelete = &cobra.Command{
 
 var certCmdAssociateToLBListener = &cobra.Command{
 	Use:   "bind",
-	Short: "绑定证书到 SLB",
+	Short: "绑定证书到负载均衡监听器",
 	Run: func(cmd *cobra.Command, args []string) {
 		// todo:
 		// 1. bind cert to lbl
@@ -66,7 +66,7 @@ var certCmdAssociateToLBListener = &cobra.Command{
 		// 2.1. get lb by lb
 		lb := modules.GetLbByLbl(global.BindingLBListener)
 		// 2.2. update lb
-		if (ok && !global.SkipUpdateLB && len(lb) != 0) && !global.SkipUpdateLB {
+		if (ok && len(lb) != 0) && !global.SkipUpdateLB {
 			modules.UpdateLoadBalancers(lb)
 		}
 	},
@@ -82,6 +82,16 @@ var certCmdDisassociteFromLBListener = &cobra.Command{
 	Use:   "unbind",
 	Short: "DisAssocite Certs from Lb listener",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("bind server certificate")
+		ok := modules.UnbindCertsFromLBListener(global.BindingCerts, global.BindingLBListener)
+		lb := modules.GetLbByLbl(global.BindingLBListener)
+		if (ok && len(lb) != 0) && !global.SkipUpdateLB {
+			modules.UpdateLoadBalancers(lb)
+		}
 	},
+}
+
+func init() {
+	certCmdDisassociteFromLBListener.Flags().StringVarP(&global.BindingLBListener, "lbl", "", "", "LB Listener to binding")
+	certCmdDisassociteFromLBListener.Flags().StringVarP(&global.BindingCerts, "sc", "", "", "Certificate is binding to LB Listener")
+	certCmdDisassociteFromLBListener.Flags().BoolVarP(&global.SkipUpdateLB, "skip-update-lb", "", false, "if true, force to skip update lb")
 }

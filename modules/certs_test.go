@@ -14,7 +14,14 @@ func Test_BindCerts(t *testing.T) {
 
 		NewWithT(t).Expect(ok).Should(BeTrue())
 	})
+}
+func Test_UnbindCerts(t *testing.T) {
 
+	t.Run("BindCerts", func(t *testing.T) {
+		ok := UnbindCertsFromLBListener("sc-y1cftotl", "lbl-kt80mzjc")
+
+		NewWithT(t).Expect(ok).Should(BeTrue())
+	})
 }
 
 func Test_DescribeOneCertByID(t *testing.T) {

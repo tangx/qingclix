@@ -39,12 +39,12 @@ func CreateCertficate(name string, keypath string, crtpath string) (id string) {
 }
 
 // BindCertsToLBListener assicoate one or more certificate file to a LB listener
-// certsIDs=sc-123456,sc-223456 split with comon (,)
-func BindCertsToLBListener(certsIDs string, lblID string) bool {
-	certs := strings.Split(certsIDs, ",")
+// certs=sc-123456,sc-223456 split with comon (,)
+func BindCertsToLBListener(certs string, lbl string) bool {
+	scs := strings.Split(certs, ",")
 	params := qingyun.AssociateCertsToLBListenerRequest{
-		ServerCertificates:   certs,
-		LoadbalancerListener: lblID,
+		ServerCertificates:   scs,
+		LoadbalancerListener: lbl,
 	}
 
 	resp, err := global.QingClix.AssociateCertsToLBListener(params)
@@ -54,11 +54,31 @@ func BindCertsToLBListener(certsIDs string, lblID string) bool {
 	}
 
 	if resp.Retcode == 0 {
-		logrus.Printf("success: binding certs(%s) to (%s)", certs, lblID)
+		logrus.Printf("success: binding certs(%s) to lbl(%s)", scs, lbl)
 		return true
 	}
 	return false
 
+}
+
+func UnbindCertsFromLBListener(certs string, lbl string) (ok bool) {
+	scs := strings.Split(certs, ",")
+	params := qingyun.DissociateCertsFromLBListenerRequest{
+		ServerCertificates:   scs,
+		LoadbalancerListener: lbl,
+	}
+
+	resp, err := global.QingClix.DissociateCertsFromLBListener(params)
+	if err != nil {
+		logrus.Fatalf("failed: %s", err.Error())
+		return false
+	}
+
+	if resp.RetCode == 0 {
+		logrus.Printf("success: unbinding certs(%s) from lbl(%s)", scs, lbl)
+		return true
+	}
+	return false
 }
 
 // DescribeOneCertByID return Certs info
