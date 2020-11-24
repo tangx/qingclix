@@ -5,7 +5,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.2.2](https://github.com/tangx/qingclix/compare/v1.2.1...v1.2.2)
+
+### Bug Fixes
+
+* **fix** delete no name check ([ef63aa1](https://github.com/tangx/qingclix/commit/ef63aa1d0526ba1d33aca983b30aab6b94939084))
+
+
+
 # [1.2.1](https://github.com/tangx/qingclix/compare/v1.2.0...v1.2.1)
+
 
 
 # [1.2.0](https://github.com/tangx/qingclix/compare/v1.1.8...v1.2.0)
