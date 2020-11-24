@@ -36,6 +36,6 @@ func Test_SearchCertByName(t *testing.T) {
 }
 
 func Test_GetCertBindToLbl(t *testing.T) {
-	m := GetCertBindToLbl("sc-0j6zpvru")
+	m := GetCertBindTo("sc-0j6zpvru")
 	spew.Dump(m)
 }

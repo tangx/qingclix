@@ -121,7 +121,7 @@ func SearchCertByName(name string) map[string]string {
 	return certs
 }
 
-func GetCertBindToLbl(sc string) (m map[string][]string) {
+func GetCertBindTo(sc string) (m map[string][]string) {
 
 	m = make(map[string][]string)
 	resp := DescribeOneCertByID(sc)
