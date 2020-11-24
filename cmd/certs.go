@@ -22,4 +22,6 @@ func init() {
 	certCmd.AddCommand(cert.CertCmdDelete)
 	certCmd.AddCommand(cert.CertCmdBind)
 	certCmd.AddCommand(cert.CertCmdUnbind)
+	certCmd.AddCommand(cert.CertCmdSearch)
+	certCmd.AddCommand(cert.CertCmdExplore)
 }

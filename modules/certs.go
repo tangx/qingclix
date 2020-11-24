@@ -102,7 +102,7 @@ func UnbindCertsFromLBListener(certs string, lbl string) (ok bool) {
 // DescribeOneCertByID return Certs info
 func DescribeOneCertByID(sc string) (resp qingyun.DescribeCertsResponse) {
 	scs := []string{sc}
-	fmt.Println(scs)
+
 	params := qingyun.DescribeCertsRequest{
 		ServerCertificates: scs,
 		Verbose:            1,
@@ -133,7 +133,7 @@ func SearchCertByName(name string) map[string]string {
 		name := cert.ServerCertificateName
 		id := cert.ServerCertificateID
 
-		logrus.Debugf("%s : %s", name, id)
+		fmt.Printf("%s : %s\n", id, name)
 		certs[name] = id
 	}
 	return certs
@@ -148,16 +148,22 @@ func GetCertBindTo(sc string) (m map[string][]string) {
 		return
 	}
 
+	fmt.Printf("Cert: %s\n", sc)
 	for _, lbl := range resp.ServerCertificateSet[0].LoadbalancerListeners {
 		lblID := lbl.LoadbalancerListenerID
 		lbID := lbl.LoadbalancerID
 
-		logrus.Printf("Cert(%s) is binding to LBL(%s) in LB(%s)\n", sc, lblID, lbID)
 		if len(m[lbID]) == 0 {
 			m[lbID] = []string{lblID}
 		} else {
 			m[lbID] = append(m[lbID], lblID)
 		}
 	}
+
+	for lb, lbls := range m {
+		fmt.Printf("    %s : %s\n", lb, strings.Join(lbls, " "))
+	}
+	fmt.Println("")
+
 	return
 }
