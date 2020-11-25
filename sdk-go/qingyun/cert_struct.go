@@ -3,6 +3,7 @@ package qingyun
 import "time"
 
 type ServerCertificate struct {
+	DNS                         string                 `yaml:"dns,omitempty" json:"dns,omitempty" url:"dns,omitempty"`
 	ServerCertificateID         string                 `yaml:"server_certificate_id,omitempty" json:"server_certificate_id,omitempty" url:"server_certificate_id,omitempty"`
 	ServerCertificateName       string                 `yaml:"server_certificate_name,omitempty" json:"server_certificate_name,omitempty" url:"server_certificate_name,omitempty"`
 	PrivateKey                  string                 `yaml:"private_key,omitempty" json:"private_key,omitempty" url:"private_key,omitempty"`

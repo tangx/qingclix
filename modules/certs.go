@@ -129,11 +129,17 @@ func SearchCertByName(name string) map[string]string {
 	}
 
 	certs := map[string]string{}
+
+	fmtt := `%14s | %-40s`
+
+	fmt.Printf(fmtt+"\n", "Cert ID", "Cert Name")
+
+	fmt.Printf(fmtt+"\n", "----", "----")
 	for _, cert := range resp.ServerCertificateSet {
 		name := cert.ServerCertificateName
 		id := cert.ServerCertificateID
 
-		fmt.Printf("%s : %s\n", id, name)
+		fmt.Printf(fmtt+"\n", id, name)
 		certs[name] = id
 	}
 	return certs
