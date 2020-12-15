@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/tangx/qingclix/modules"
+	"github.com/tangx/qingclix/sdk-go/qingyun"
 )
 
 // contractCmd represents the contract command
@@ -14,6 +17,10 @@ var contractCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("contract called")
 	},
+}
+
+func init() {
+	rootCmd.AddCommand(contractCmd)
 }
 
 // contractCmdApplyfor represents the contract command
@@ -26,7 +33,7 @@ var contractCmdApplyfor = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(contractCmd)
+	contractCmd.AddCommand(contractCmdApplyfor)
 	contractCmdApplyfor.Flags().StringVarP(&target_resource, "target", "t", "", "为指定资源购买合约")
 }
 
@@ -44,5 +51,25 @@ func ApplyForResource() {
 
 }
 
-func applyForResource(resource string) {
+// applyForResource contract
+// resources i-xxx,i-yyy,i-zzz
+func applyForResource(resources string) {
+
+	for _, res := range strings.Split(resources, ",") {
+		logrus.Infof("apply concat for %s ... ", res)
+
+		params := qingyun.ApplyReservedContractWithResourcesRequest{
+			Resources: []string{res},
+			Months:    1,
+			AutoRenew: 1,
+		}
+
+		contractid := modules.ApplyContractWithResources(params)
+
+		if len(contractid) != 0 {
+			fmt.Printf("(contractid) %s", contractid)
+		}
+		fmt.Println("")
+	}
+
 }
