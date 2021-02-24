@@ -5,6 +5,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.3.0](https://github.com/tangx/qingclix/compare/v1.2.2...v1.3.0)
+
+### Features
+
+* **feat** add jobs api for qingyun sdk ([2d22074](https://github.com/tangx/qingclix/commit/2d220741a50cf154b5215a4b12c607484beba025))
+* **feat** 根据资源购买合约 ([07642a9](https://github.com/tangx/qingclix/commit/07642a95d708c2a987d6cb12e1bf85d91edab9db))
+
+
+
 # [1.2.2](https://github.com/tangx/qingclix/compare/v1.2.1...v1.2.2)
 
 ### Bug Fixes
