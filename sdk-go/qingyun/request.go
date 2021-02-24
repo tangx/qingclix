@@ -141,7 +141,7 @@ func (cli *Client) MethodGET(action string, params interface{}, ptrResp interfac
 	}
 
 	data, err := cli.requestGET(action, urlValues, ptrResp)
-	logrus.Debugf("%s", data)
+	// logrus.Debugf("%s", data)
 
 	// http request error
 	if err != nil {

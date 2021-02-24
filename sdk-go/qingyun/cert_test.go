@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/sirupsen/logrus"
 )
 
 var crt = `-----BEGIN CERTIFICATE-----
@@ -76,5 +75,5 @@ func Test_DescribeCertByID(t *testing.T) {
 }
 
 func init() {
-	logrus.SetLevel(logrus.DebugLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
 }
