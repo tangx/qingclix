@@ -34,13 +34,13 @@ type ErrorResponse struct {
 
 // 请求 alidns API
 // 当返回 error 为 nil 的时候， errResp 一定为空结构体。 否则可以通过 errResp.Message 查看错误信息。
-func (cli *Client) requestGET(action string, values url.Values, respInfo interface{}) ([]byte, error) {
+func (cli *Client) requestGET(action string, urlValues url.Values, respInfo interface{}) ([]byte, error) {
 	method := "GET"
-	if values == nil {
-		values = url.Values{}
+	if urlValues == nil {
+		urlValues = url.Values{}
 	}
 
-	values = pathEcscape(values)
+	urlValues = pathEcscape(urlValues)
 
 	// 设置时区:
 	//    https://blog.csdn.net/qq_26981997/article/details/53454606
@@ -52,28 +52,28 @@ func (cli *Client) requestGET(action string, values url.Values, respInfo interfa
 
 	// 阿里云服务器时间使用的是 UTC 时区。 中国时区+8
 	// 会一直报错: Specified time stamp or date value is expired
-	values.Set("time_stamp", timestamp)
+	urlValues.Set("time_stamp", timestamp)
 
 	// common body
 	// param.Set("Format", "JSON")
-	values.Set("signature_method", SignatureMethod)
-	values.Set("signature_version", SignatureVersion)
-	values.Set("version", apiVersion)
-	values.Set("access_key_id", cli.QyAccessKeyID)
+	urlValues.Set("signature_method", SignatureMethod)
+	urlValues.Set("signature_version", SignatureVersion)
+	urlValues.Set("version", apiVersion)
+	urlValues.Set("access_key_id", cli.QyAccessKeyID)
 
 	// ActionBody 请求是传入
 	//param.Set("DomainName", "example.com")
-	values.Set("action", action)
+	urlValues.Set("action", action)
 
 	// 判断参数是否带有 zone, 否则使用 config 里面默认默认值
-	if zone := values.Get("zone"); zone == "" {
-		values.Set("zone", cli.Zone)
+	if zone := urlValues.Get("zone"); zone == "" {
+		urlValues.Set("zone", cli.Zone)
 	}
 
 	// 获取签名
 	// 注意: 阿里云对用户 key 签名有特殊说明
 	//    https://help.aliyun.com/document_detail/29747.html?spm=a2c4g.11186623.6.619.57ad2846HCScB1
-	signature := Signature(method, apiPlatform, values, cli.QySecretAccessKey)
+	signature := Signature(method, apiPlatform, urlValues, cli.QySecretAccessKey)
 	logrus.Debugf("signature = %s\n", signature)
 	// 请求体中增加签名参数
 	//param.Set("Signature", url.QueryEscape(signature))
@@ -81,7 +81,7 @@ func (cli *Client) requestGET(action string, values url.Values, respInfo interfa
 
 	// 构建 url 请求地址
 	// https://api.qingcloud.com/iaas/?access_key_id=QYACCESSKEYIDEXAMPLE&action=DescribeInstances&expires=2013-08-29T07%3A42%3A25Z&limit=20&signature_method=HmacSHA256&signature_version=1&status.1=running&time_stamp=2013-08-29T06%3A42%3A25Z&version=1&zone=pek3b&signature=ihPnXFgsg5yyqhDN2IejJ2%2Bbo89ABQ1UqFkyOdzRITY%3D
-	urls := strings.Replace(values.Encode(), "%25", "%", -1)
+	urls := strings.Replace(urlValues.Encode(), "%25", "%", -1)
 	reqURL := reqProtocol + "://" + apiServer + apiPlatform + "?" + urls + "&signature=" + signature
 	// fmt.Println(reqURL)
 	logrus.Debugf("reqURL = %s\n", reqURL)
@@ -141,20 +141,14 @@ func (cli *Client) MethodGET(action string, params interface{}, ptrResp interfac
 	return nil
 }
 
-// MethodPOST 使用 POST 请求调用 API
-func (cli *Client) MethodPOST(action string, params interface{}, ptrResp interface{}) error {
-
-	return nil
-}
-
-func pathEcscape(params url.Values) url.Values {
+func pathEcscape(urlValues url.Values) url.Values {
 	/*
 		https://docs.qingcloud.com/product/api/common/signature.html
 		编码时空格要转换成 “%20” , 而不是 “+”
 		resolv: https://www.jianshu.com/p/2ba7dda583b5
 	*/
 	p := url.Values{}
-	for k, values := range params {
+	for k, values := range urlValues {
 		var v2 []string
 		for _, v := range values {
 			v2 = append(v2, url.PathEscape(v))
@@ -163,4 +157,10 @@ func pathEcscape(params url.Values) url.Values {
 	}
 
 	return p
+}
+
+// MethodPOST 使用 POST 请求调用 API
+func (cli *Client) MethodPOST(action string, params interface{}, ptrResp interface{}) error {
+
+	return nil
 }
