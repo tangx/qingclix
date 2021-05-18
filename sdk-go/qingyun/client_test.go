@@ -54,7 +54,7 @@ func Test_RunInstance(t *testing.T) {
 	}
 	// urlValue := cli.RunInstances(runInstancesData)
 
-	bodyByte, _ := cli.Do("RunInstances", runInstancesData, nil, nil)
+	bodyByte, _ := cli.do("RunInstances", runInstancesData, nil, nil)
 	fmt.Printf("%s", bodyByte)
 }
 
@@ -62,7 +62,7 @@ func Test_RunInstance(t *testing.T) {
 func Test_DescribeReservedContracts(t *testing.T) {
 	cli := NewWithFile(authFile)
 
-	bodyByte, _ := cli.Do("DescribeReservedContracts", nil, nil, nil)
+	bodyByte, _ := cli.do("DescribeReservedContracts", nil, nil, nil)
 	fmt.Printf("%s\n", bodyByte)
 }
 
@@ -75,7 +75,7 @@ func Test_DescribeReservedResources(t *testing.T) {
 		"zone":        "pek3c",
 	}
 
-	bodyByte, _ := cli.GetByMap("DescribeReservedResources", data)
+	bodyByte, _ := cli.getByMap("DescribeReservedResources", data)
 	fmt.Printf("%s\n", bodyByte)
 }
 
