@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.3.1](https://github.com/tangx/qingclix/compare/v1.3.0...v1.3.1)
+
+### Bug Fixes
+
+* **fix** 修复使用 GET 请求创建 https 证书是，  414 URI too Large 的问题 ([a347040](https://github.com/tangx/qingclix/commit/a3470404d5a414614846295ccb014a7628a5eb3c))
+
+
+
 # [1.3.0](https://github.com/tangx/qingclix/compare/v1.2.2...v1.3.0)
 
 ### Features
