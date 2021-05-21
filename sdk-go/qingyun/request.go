@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -35,12 +34,13 @@ type ErrorResponse struct {
 
 // 请求 alidns API
 // 当返回 error 为 nil 的时候， errResp 一定为空结构体。 否则可以通过 errResp.Message 查看错误信息。
-func (cli *Client) request(method, action string, param url.Values, body io.Reader, respInfo interface{}) ([]byte, error) {
-	if param == nil {
-		param = url.Values{}
+func (cli *Client) requestGET(action string, urlValues url.Values, respInfo interface{}) ([]byte, error) {
+	method := "GET"
+	if urlValues == nil {
+		urlValues = url.Values{}
 	}
 
-	param = pathEcscape(param)
+	urlValues = pathEcscape(urlValues)
 
 	// 设置时区:
 	//    https://blog.csdn.net/qq_26981997/article/details/53454606
@@ -52,28 +52,28 @@ func (cli *Client) request(method, action string, param url.Values, body io.Read
 
 	// 阿里云服务器时间使用的是 UTC 时区。 中国时区+8
 	// 会一直报错: Specified time stamp or date value is expired
-	param.Set("time_stamp", timestamp)
+	urlValues.Set("time_stamp", timestamp)
 
 	// common body
 	// param.Set("Format", "JSON")
-	param.Set("signature_method", SignatureMethod)
-	param.Set("signature_version", SignatureVersion)
-	param.Set("version", apiVersion)
-	param.Set("access_key_id", cli.QyAccessKeyID)
+	urlValues.Set("signature_method", SignatureMethod)
+	urlValues.Set("signature_version", SignatureVersion)
+	urlValues.Set("version", apiVersion)
+	urlValues.Set("access_key_id", cli.QyAccessKeyID)
 
 	// ActionBody 请求是传入
 	//param.Set("DomainName", "example.com")
-	param.Set("action", action)
+	urlValues.Set("action", action)
 
 	// 判断参数是否带有 zone, 否则使用 config 里面默认默认值
-	if zone := param.Get("zone"); zone == "" {
-		param.Set("zone", cli.Zone)
+	if zone := urlValues.Get("zone"); zone == "" {
+		urlValues.Set("zone", cli.Zone)
 	}
 
 	// 获取签名
 	// 注意: 阿里云对用户 key 签名有特殊说明
 	//    https://help.aliyun.com/document_detail/29747.html?spm=a2c4g.11186623.6.619.57ad2846HCScB1
-	signature := Signature(method, apiPlatform, param, cli.QySecretAccessKey)
+	signature := Signature(method, apiPlatform, urlValues, cli.QySecretAccessKey)
 	logrus.Debugf("signature = %s\n", signature)
 	// 请求体中增加签名参数
 	//param.Set("Signature", url.QueryEscape(signature))
@@ -81,12 +81,12 @@ func (cli *Client) request(method, action string, param url.Values, body io.Read
 
 	// 构建 url 请求地址
 	// https://api.qingcloud.com/iaas/?access_key_id=QYACCESSKEYIDEXAMPLE&action=DescribeInstances&expires=2013-08-29T07%3A42%3A25Z&limit=20&signature_method=HmacSHA256&signature_version=1&status.1=running&time_stamp=2013-08-29T06%3A42%3A25Z&version=1&zone=pek3b&signature=ihPnXFgsg5yyqhDN2IejJ2%2Bbo89ABQ1UqFkyOdzRITY%3D
-	urls := strings.Replace(param.Encode(), "%25", "%", -1)
+	urls := strings.Replace(urlValues.Encode(), "%25", "%", -1)
 	reqURL := reqProtocol + "://" + apiServer + apiPlatform + "?" + urls + "&signature=" + signature
 	// fmt.Println(reqURL)
 	logrus.Debugf("reqURL = %s\n", reqURL)
 
-	req, err := http.NewRequest(method, reqURL, body)
+	req, err := http.NewRequest(method, reqURL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -104,35 +104,11 @@ func (cli *Client) request(method, action string, param url.Values, body io.Read
 
 }
 
-// requestGET 使用 GET 方法请求 API
-func (cli *Client) requestGET(action string, param url.Values, respInfo interface{}) ([]byte, error) {
-	return cli.request("GET", action, param, nil, respInfo)
-}
-
-// Do 开始执行请求
-func (cli *Client) Do(action string, body map[string]string, optional map[string]string, respInfo interface{}) ([]byte, error) {
-	param := url.Values{}
-	for k, v := range body {
-		param.Set(k, v)
-	}
-	for k, v := range optional {
-		param.Set(k, v)
-	}
-
-	return cli.requestGET(action, param, respInfo)
-}
-
-// GetByMap 请求直接使用 map[string]string 传递所有调用请求。 具体请求参数查看青云对应 API 文档
-func (cli *Client) GetByMap(action string, body map[string]string) ([]byte, error) {
-	return cli.Do(action, body, nil, nil)
-}
-
-// GetByUrlValues 请求直接使用 url.Values 作为参数。 具体请求参数查看青云对应 API 文档
-func (cli *Client) GetByUrlValues(action string, params url.Values) ([]byte, error) {
-	return cli.requestGET(action, params, nil)
-}
-
-// func MethodGET
+// MethodGET
+// params 传入一个 青云 API 请求 struct， 并通过 query.Values 转换程 url.Values
+//    随后通过 GET 方法请求 API 并返回结果
+// 结果通过 API 定义的返回结构体指针进行 json unmarshal
+// 以此在上层调用时拿到解析后的结果数据
 func (cli *Client) MethodGET(action string, params interface{}, ptrResp interface{}) error {
 
 	urlValues, err := query.Values(params)
@@ -165,14 +141,14 @@ func (cli *Client) MethodGET(action string, params interface{}, ptrResp interfac
 	return nil
 }
 
-func pathEcscape(params url.Values) url.Values {
+func pathEcscape(urlValues url.Values) url.Values {
 	/*
 		https://docs.qingcloud.com/product/api/common/signature.html
 		编码时空格要转换成 “%20” , 而不是 “+”
 		resolv: https://www.jianshu.com/p/2ba7dda583b5
 	*/
 	p := url.Values{}
-	for k, values := range params {
+	for k, values := range urlValues {
 		var v2 []string
 		for _, v := range values {
 			v2 = append(v2, url.PathEscape(v))
@@ -181,4 +157,10 @@ func pathEcscape(params url.Values) url.Values {
 	}
 
 	return p
+}
+
+// MethodPOST 使用 POST 请求调用 API
+func (cli *Client) MethodPOST(action string, params interface{}, ptrResp interface{}) error {
+
+	return nil
 }

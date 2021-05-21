@@ -1,5 +1,7 @@
 package qingyun
 
+import "github.com/yunify/qingcloud-sdk-go/service"
+
 type CreateServerCertificateRequest struct {
 	ServerCertificateName string `json:"server_certificate_name,omitempty" url:"server_certificate_name,omitempty" yaml:"server_certificate_name,omitempty"`
 	CertificateContent    string `json:"certificate_content,omitempty" url:"certificate_content,omitempty" yaml:"certificate_content,omitempty"`
@@ -14,8 +16,26 @@ type CreateServerCertificateResponse struct {
 }
 
 func (cli *Client) CreateCertificate(params CreateServerCertificateRequest) (resp CreateServerCertificateResponse, err error) {
-	err = cli.MethodGET("CreateServerCertificate", params, &resp)
-	return
+	lbcli, err := cli.qcli.LoadBalancer(cli.Zone)
+	if err != nil {
+		return resp, err
+	}
+	input := service.CreateServerCertificateInput{
+		ServerCertificateName: &params.ServerCertificateName,
+		PrivateKey:            &params.PrivateKey,
+		CertificateContent:    &params.CertificateContent,
+	}
+
+	output, err := lbcli.CreateServerCertificate(&input)
+	if err != nil {
+		return resp, err
+	}
+
+	resp.ServerCertificateID = *output.ServerCertificateID
+	resp.RetCode = *output.RetCode
+	resp.Action = *output.Action
+
+	return resp, nil
 }
 
 type DeleteServerCertificatesRequest struct {

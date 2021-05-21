@@ -10,6 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.8.0
 	github.com/spf13/cobra v1.1.1
 	github.com/tangx/go-querystring v1.0.1
+	github.com/yunify/qingcloud-sdk-go v2.0.0-alpha.38+incompatible
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
 	golang.org/x/sys v0.0.0-20210217105451-b926d437f341 // indirect
 	golang.org/x/text v0.3.5 // indirect
