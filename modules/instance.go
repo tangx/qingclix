@@ -61,3 +61,22 @@ func CheckInstanceStatus(instID string, status string) (err error) {
 	err = fmt.Errorf("Check status Failed or not Match")
 	return err
 }
+
+// StopInstance 关机
+func StopInstance(ins []string, force int) (jobid string) {
+	if len(ins) == 0 {
+		return
+	}
+
+	req := qingyun.StopInstancesRequest{
+		Instances: ins,
+		Force:     force,
+	}
+	resp, err := global.QingClix.StopInstances(req)
+	if err != nil {
+		logrus.Errorf("关机失败, %s", ins)
+		return
+	}
+
+	return resp.JobId
+}

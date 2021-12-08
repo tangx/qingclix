@@ -48,8 +48,15 @@ func isDissocateValidArgs() bool {
 	return true
 }
 
-func targetsFromString(str string) []string {
-	return strings.Split(dissociteTargets, ",")
+func targetsFromString(str string) (ret []string) {
+	for _, res := range strings.Split(dissociteTargets, ",") {
+		res = strings.TrimSpace(res)
+		if len(res) == 0 {
+			continue
+		}
+		ret = append(ret, res)
+	}
+	return
 }
 
 func targetsFromFile(file string) (targets []string) {

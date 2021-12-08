@@ -30,6 +30,29 @@ func (cli *Client) RunInstances(params RunInstancesRequest) (resp RunInstancesRe
 	return
 }
 
+type TerminateInstancesRequest struct {
+	Instances   []string `yaml:"instances,omitempty" json:"instances,omitempty" url:"instances,omitempty,dotnumbered,numbered1"`
+	DirectCease int      `yaml:"directCease,omitempty" json:"directCease,omitempty" url:"directCease,omitempty"`
+	Zone        string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
+}
+
+type StopInstancesRequest struct {
+	Instances []string `yaml:"instances,omitempty" json:"instances,omitempty" url:"instances,omitempty,dotnumbered,numbered1"`
+	Force     int      `yaml:"force,omitempty" json:"force,omitempty" url:"force,omitempty"`
+	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
+}
+
+type StopInstancesResponse struct {
+	Action  string `yaml:"action,omitempty" jsson:"action,omitempty" url:"action,omitempty"`
+	JobId   string `yaml:"job_id,omitempty" json:"job_id,omitempty" url:"job_id,omitempty"`
+	RetCode int    `yaml:"ret_code,omitempty" json:"ret_code,omitempty" url:"ret_code,omitempty"`
+}
+
+func (cli *Client) StopInstances(params StopInstancesRequest) (resp StopInstancesResponse, err error) {
+	err = cli.MethodGET("StopInstances", params, &resp)
+	return
+}
+
 type DescribeInstancesRequest struct {
 	Instances     []string `yaml:"instances,omitempty" json:"instances,omitempty" url:"instances,omitempty,dotnumbered,numbered1"`
 	ImageID       string   `yaml:"image_id,omitempty" json:"image_id,omitempty" url:"image_id,omitempty"`
