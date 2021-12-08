@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.4.1](https://github.com/tangx/qingclix/compare/v1.4.0...v1.4.1)
+
+### Bug Fixes
+
+* **fix** 增加 volumn 磁盘解绑 ([c46766b](https://github.com/tangx/qingclix/commit/c46766b5278d903e2240c29e2c3c9e9f62e8e10d))
+
+
+
 # [1.4.0](https://github.com/tangx/qingclix/compare/v1.3.1...v1.4.0)
 
 ### Features
