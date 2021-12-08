@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"bufio"
+	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -18,14 +20,14 @@ var contractCmdDissocite = &cobra.Command{
 			return
 		}
 
-		dissociteContract()
+		doDissociteContract()
 	},
 }
 
 var (
 	dissociteTargetType string
 	dissociteTargets    string
-	dissociteFromFile   string
+	fileToDissocite     string
 )
 
 func init() {
@@ -37,28 +39,47 @@ func init() {
 }
 
 func isDissocateValidArgs() bool {
-	if len(dissociteTargets) == 0 && len(dissociteFromFile) == 0 {
+	if len(dissociteTargets) == 0 && len(fileToDissocite) == 0 {
 		return false
 	}
 
 	return true
 }
 
-func dissoResourceFromTargets() []string {
+func targetsFromString(str string) []string {
 	return strings.Split(dissociteTargets, ",")
 }
 
-func dissoResourceFromFile() []string {
+func targetsFromFile(file string) (targets []string) {
 
-	return nil
+	f, err := os.Open(file)
+	if err != nil {
+		logrus.Errorf("open file %s failed: %v", err)
+		return
+	}
+	defer f.Close()
+
+	buf := bufio.NewScanner(f)
+	for buf.Scan() {
+		line := buf.Text()
+
+		ret := targetsFromString(line)
+		targets = append(targets, ret...)
+	}
+
+	return
 }
 
-func dissociteContract() {
+func doDissociteContract() {
 
-	instances := dissoResourceFromFile()
-	instances = append(instances, dissoResourceFromTargets()...)
+	instances := targetsFromFile(fileToDissocite)
+	instances = append(instances, targetsFromString(dissociteTargets)...)
 
 	for _, instance := range instances {
+		instance = strings.TrimSpace(instance)
+		if len(instance) == 0 {
+			continue
+		}
 
 		contract := getResourceContract(instance)
 		if contract == "" {
