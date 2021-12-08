@@ -5,6 +5,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.5.0](https://github.com/tangx/qingclix/compare/v1.4.1...v1.5.0)
+
+### Bug Fixes
+
+* **fix** 资源解析错误 ([5c55ac9](https://github.com/tangx/qingclix/commit/5c55ac951e1d56b95f5d13eab93f7d83a66f5ba5))
+* **fix** 增加开关机 ([913cb76](https://github.com/tangx/qingclix/commit/913cb76b1b85c6e2bf336290eb21e3b06604060c))
+
+
+### Features
+
+* **feat** 增加关机 ([55778c5](https://github.com/tangx/qingclix/commit/55778c5964d0f4410fc5c2a8548ce648df7ad0a2))
+
+
+
 # [1.4.1](https://github.com/tangx/qingclix/compare/v1.4.0...v1.4.1)
 
 ### Bug Fixes
