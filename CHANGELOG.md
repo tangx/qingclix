@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.4.0](https://github.com/tangx/qingclix/compare/v1.3.1...v1.4.0)
+
+### Features
+
+* **feat** dissocite contract of resource ([f8d433b](https://github.com/tangx/qingclix/commit/f8d433be31467455ab680cd87e77e2c6427a74c3))
+
+
+
 # [1.3.1](https://github.com/tangx/qingclix/compare/v1.3.0...v1.3.1)
 
 ### Bug Fixes
