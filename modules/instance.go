@@ -68,6 +68,10 @@ func StopInstance(ins []string, force int) (jobid string) {
 		return "nothing to do"
 	}
 
+	if force == 1 {
+		logrus.Warnf("强制关机: %s", ins)
+	}
+
 	req := qingyun.StopInstancesRequest{
 		Instances: ins,
 		Force:     force,
