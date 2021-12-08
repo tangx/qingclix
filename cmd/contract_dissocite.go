@@ -35,7 +35,9 @@ func init() {
 	contractCmdDissocite.Flags().StringVarP(&dissociteTargets, "target", "t", "", "为指定资源解绑合约, i-xxx,i-yyy,i-zzz")
 	contractCmdDissocite.Flags().StringVarP(&dissociteTargets, "file", "f", "", `为指定资源解绑合约, 通过文件导入。 /path/to/file
 文件内可以多行， 每行可以多个资源， 资源之间以 , 分隔。`)
-	contractCmdDissocite.Flags().StringVarP(&dissociteTargetType, "type", "", "instance", "为指定资源制定类型，所有资源必须为相同类型。 可选项: instance")
+	contractCmdDissocite.Flags().StringVarP(&dissociteTargetType, "type", "", "instance", `为指定资源制定类型，所有资源必须为相同类型。
+可选项: instance | volume`)
+
 }
 
 func isDissocateValidArgs() bool {
@@ -102,8 +104,9 @@ func getResourceContract(res string) (contract string) {
 	switch dissociteTargetType {
 	case "instance":
 		return getInstanceContract(res)
+	case "volume":
+		return getVolumeContract(res)
 	}
-
 	return
 }
 
@@ -113,6 +116,15 @@ func getInstanceContract(instance string) (contract string) {
 
 	for _, ins := range resp.InstanceSet {
 		return ins.ReservedContract
+	}
+
+	return
+}
+
+func getVolumeContract(volume string) (contract string) {
+	resp := modules.DescVolume(volume)
+	for _, vol := range resp.DescribeVolumeSet {
+		return vol.VolumeID
 	}
 
 	return
