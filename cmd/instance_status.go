@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/modules"
@@ -14,6 +16,7 @@ var instanceCmdStatus = &cobra.Command{
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !isValidSwitchStatus() {
+			logrus.Info("参数不合法")
 			_ = cmd.Help()
 		}
 		switchInstanceStatus()
@@ -46,12 +49,12 @@ func stopInstances(ins ...string) {
 func restartInstances(ins []string, action modules.InstanceAction) {
 
 	id := modules.StartOrRestartInstances(ins, action)
-	logrus.Infof("关机任务已提交， 任务id: %s", id)
+	logrus.Infof("开机或重启任务已提交， 任务id: %s", id)
 }
 func switchInstanceStatus() {
 	ins := targetsFromString(switchStatusTargets)
 
-	action := modules.InstanceAction(switchStatusAction)
+	action := modules.InstanceAction(strings.ToLower(switchStatusAction))
 
 	switch action {
 	case modules.InstanceActionStop:

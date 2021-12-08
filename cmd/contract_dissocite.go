@@ -49,7 +49,7 @@ func isDissocateValidArgs() bool {
 }
 
 func targetsFromString(str string) (ret []string) {
-	for _, res := range strings.Split(dissociteTargets, ",") {
+	for _, res := range strings.Split(str, ",") {
 		res = strings.TrimSpace(res)
 		if len(res) == 0 {
 			continue

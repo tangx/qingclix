@@ -65,7 +65,7 @@ func CheckInstanceStatus(instID string, status string) (err error) {
 // StopInstance 关机
 func StopInstance(ins []string, force int) (jobid string) {
 	if len(ins) == 0 {
-		return
+		return "nothing to do"
 	}
 
 	req := qingyun.StopInstancesRequest{
@@ -84,14 +84,14 @@ func StopInstance(ins []string, force int) (jobid string) {
 type InstanceAction string
 
 const (
-	InstanceActionStart   InstanceAction = "InstanceActionStart"
-	InstanceActionStop    InstanceAction = "InstanceActionStop"
-	InstanceActionRestart InstanceAction = "InstanceActionRestart"
+	InstanceActionStart   InstanceAction = "start"
+	InstanceActionStop    InstanceAction = "stop"
+	InstanceActionRestart InstanceAction = "restart"
 )
 
 func StartOrRestartInstances(ins []string, action InstanceAction) (jobid string) {
 	if len(ins) == 0 {
-		return
+		return "nothing to do"
 	}
 
 	req := qingyun.BaseActionInstancesRequest{
