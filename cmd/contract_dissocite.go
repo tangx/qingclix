@@ -32,7 +32,7 @@ func init() {
 	contractCmd.AddCommand(contractCmdDissocite)
 	contractCmdDissocite.Flags().StringVarP(&dissociteTargets, "target", "t", "", "为指定资源解绑合约, i-xxx,i-yyy,i-zzz")
 	contractCmdDissocite.Flags().StringVarP(&dissociteTargets, "file", "f", "", `为指定资源解绑合约, 通过文件导入。 /path/to/file
-	文件内可以多行， 每行可以多个资源， 资源之间以 , 分隔。`)
+文件内可以多行， 每行可以多个资源， 资源之间以 , 分隔。`)
 	contractCmdDissocite.Flags().StringVarP(&dissociteTargetType, "type", "", "instance", "为指定资源制定类型，所有资源必须为相同类型。 可选项: instance")
 }
 
