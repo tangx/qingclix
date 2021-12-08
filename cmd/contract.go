@@ -15,7 +15,8 @@ var contractCmd = &cobra.Command{
 	Use:   "contract",
 	Short: "合约管理",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("contract called")
+		// fmt.Println("contract called")
+		_ = cmd.Help()
 	},
 }
 
@@ -28,13 +29,19 @@ var contractCmdApplyfor = &cobra.Command{
 	Use:   "apply-for",
 	Short: "对已有资源创建合约",
 	Run: func(cmd *cobra.Command, args []string) {
+		// _ = cmd.Help()
+		if len(target_resource) == 0 {
+			_ = cmd.Help()
+			return
+		}
+
 		ApplyForResource()
 	},
 }
 
 func init() {
 	contractCmd.AddCommand(contractCmdApplyfor)
-	contractCmdApplyfor.Flags().StringVarP(&target_resource, "target", "t", "", "为指定资源购买合约")
+	contractCmdApplyfor.Flags().StringVarP(&target_resource, "target", "t", "", "为指定资源购买合约, i-xxx,i-yyy,i-zzz")
 }
 
 var (
