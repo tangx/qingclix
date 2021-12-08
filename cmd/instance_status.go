@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tangx/qingclix/modules"
 )
@@ -21,9 +22,9 @@ to quickly create a Cobra application.`,
 
 func init() {
 	instanceCmd.AddCommand(instanceCmdStatus)
-	instanceCmdStatus.Flags().StringVarP(&switchStatusTargets, "targets", "t", "", "开关机对象")
-	instanceCmdStatus.Flags().StringVarP(&switchStatusAction, "action", "", "", "开关机行（显示指定）: start | stop")
-	instanceCmdStatus.Flags().BoolVarP(&stopForce, "force", "", false, "强制关机")
+	instanceCmdStatus.Flags().StringVarP(&switchStatusTargets, "targets", "t", "", "开关机对象， 以逗号分隔: ins-123,ins-yyy,ins-zzz")
+	instanceCmdStatus.Flags().StringVarP(&switchStatusAction, "action", "", "", "开关机行（显示指定）: start | stop | restart")
+	instanceCmdStatus.Flags().BoolVarP(&stopForce, "force", "", false, "强制关机, 仅 action=stop 有效")
 }
 
 var (
@@ -38,16 +39,27 @@ func stopInstances(ins ...string) {
 		force = 1
 	}
 
-	modules.StopInstance(ins, force)
+	id := modules.StopInstance(ins, force)
+	logrus.Infof("关机任务已提交， 任务id: %s", id)
 }
 
+func restartInstances(ins []string, action modules.InstanceAction) {
+
+	id := modules.StartOrRestartInstances(ins, action)
+	logrus.Infof("关机任务已提交， 任务id: %s", id)
+}
 func switchInstanceStatus() {
 	ins := targetsFromString(switchStatusTargets)
 
-	switch switchStatusAction {
-	case "stop":
+	action := modules.InstanceAction(switchStatusAction)
+
+	switch action {
+	case modules.InstanceActionStop:
 		stopInstances(ins...)
+	case modules.InstanceActionStart, modules.InstanceActionRestart:
+		restartInstances(ins, action)
 	}
+
 }
 
 func isValidSwitchStatus() bool {

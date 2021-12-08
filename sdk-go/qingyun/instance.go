@@ -1,5 +1,6 @@
 package qingyun
 
+// 购买
 type RunInstancesRequest struct {
 	ImageID       string   `yaml:"image_id,omitempty" json:"image_id,omitempty" url:"image_id,omitempty"`
 	CPU           int      `yaml:"cpu,omitempty" json:"cpu,omitempty" url:"cpu,omitempty"`
@@ -30,10 +31,17 @@ func (cli *Client) RunInstances(params RunInstancesRequest) (resp RunInstancesRe
 	return
 }
 
+// 释放
 type TerminateInstancesRequest struct {
 	Instances   []string `yaml:"instances,omitempty" json:"instances,omitempty" url:"instances,omitempty,dotnumbered,numbered1"`
 	DirectCease int      `yaml:"directCease,omitempty" json:"directCease,omitempty" url:"directCease,omitempty"`
 	Zone        string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
+}
+
+// 关机
+type BaseActionInstancesRequest struct {
+	Instances []string `yaml:"instances,omitempty" json:"instances,omitempty" url:"instances,omitempty,dotnumbered,numbered1"`
+	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 }
 
 type StopInstancesRequest struct {
@@ -42,14 +50,26 @@ type StopInstancesRequest struct {
 	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 }
 
-type StopInstancesResponse struct {
+type ActionInstancesResponse struct {
 	Action  string `yaml:"action,omitempty" jsson:"action,omitempty" url:"action,omitempty"`
 	JobId   string `yaml:"job_id,omitempty" json:"job_id,omitempty" url:"job_id,omitempty"`
 	RetCode int    `yaml:"ret_code,omitempty" json:"ret_code,omitempty" url:"ret_code,omitempty"`
 }
 
-func (cli *Client) StopInstances(params StopInstancesRequest) (resp StopInstancesResponse, err error) {
+func (cli *Client) StopInstances(params StopInstancesRequest) (resp ActionInstancesResponse, err error) {
 	err = cli.MethodGET("StopInstances", params, &resp)
+	return
+}
+
+// 开机
+func (cli *Client) StartInstances(params BaseActionInstancesRequest) (resp ActionInstancesResponse, err error) {
+	err = cli.MethodGET("StartInstances", params, &resp)
+	return
+}
+
+// 开机
+func (cli *Client) RestartInstances(params BaseActionInstancesRequest) (resp ActionInstancesResponse, err error) {
+	err = cli.MethodGET("RestartInstances", params, &resp)
 	return
 }
 

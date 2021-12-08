@@ -80,3 +80,37 @@ func StopInstance(ins []string, force int) (jobid string) {
 
 	return resp.JobId
 }
+
+type InstanceAction string
+
+const (
+	InstanceActionStart   InstanceAction = "InstanceActionStart"
+	InstanceActionStop    InstanceAction = "InstanceActionStop"
+	InstanceActionRestart InstanceAction = "InstanceActionRestart"
+)
+
+func StartOrRestartInstances(ins []string, action InstanceAction) (jobid string) {
+	if len(ins) == 0 {
+		return
+	}
+
+	req := qingyun.BaseActionInstancesRequest{
+		Instances: ins,
+	}
+
+	resp := qingyun.ActionInstancesResponse{}
+	var err error
+
+	switch action {
+	case InstanceActionStart:
+		resp, err = global.QingClix.StartInstances(req)
+	case InstanceActionRestart:
+		resp, err = global.QingClix.RestartInstances(req)
+	}
+
+	if err != nil {
+		logrus.Errorf("%s instance %s: failed:", action, ins)
+	}
+
+	return resp.JobId
+}
