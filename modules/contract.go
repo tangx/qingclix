@@ -88,3 +88,23 @@ func AssociateContract(contract string, resources []string) bool {
 
 	return true
 }
+
+func DissociateContract(contract string, resources ...string) bool {
+	if len(resources) == 0 {
+		return false
+	}
+
+	params := qingyun.DissociateReservedContractRequest{
+		Contract:  contract,
+		Resources: resources,
+	}
+
+	_, err := global.QingClix.DissociateReservedContract(params)
+
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return false
+	}
+
+	return true
+}
