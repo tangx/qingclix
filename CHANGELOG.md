@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.5.1](https://github.com/tangx/qingclix/compare/v1.5.0...v1.5.1)
+
+### Bug Fixes
+
+* **fix** volume contract dissocite ([cd6167e](https://github.com/tangx/qingclix/commit/cd6167e9c1bc42a2574eb4a7755c8486a760151c))
+
+
+
 # [1.5.0](https://github.com/tangx/qingclix/compare/v1.4.1...v1.5.0)
 
 ### Bug Fixes
