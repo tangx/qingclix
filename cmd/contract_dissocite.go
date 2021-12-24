@@ -131,7 +131,7 @@ func getInstanceContract(instance string) (contract string) {
 func getVolumeContract(volume string) (contract string) {
 	resp := modules.DescVolume(volume)
 	for _, vol := range resp.DescribeVolumeSet {
-		return vol.VolumeID
+		return vol.ReservedContract
 	}
 
 	return
