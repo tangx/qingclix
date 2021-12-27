@@ -32,7 +32,7 @@ jobs:
       run: env
 
     - name: Build Binary
-      run: /bin/bash build.sh
+      run: make build.x
     
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
