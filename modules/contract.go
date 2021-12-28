@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 	"github.com/tangx/qingclix/global"
 	"github.com/tangx/qingclix/sdk-go/qingyun"
@@ -107,4 +109,26 @@ func DissociateContract(contract string, resources ...string) bool {
 	}
 
 	return true
+}
+
+func TerminateContract(contract string, confirm bool) error {
+	if !confirm {
+		return fmt.Errorf("请确认释放")
+	}
+
+	params := qingyun.TerminateReservedContractRequest{
+		ContractID: contract,
+		IsConfirm:  1,
+	}
+
+	resp, err := global.QingClix.TerminateReservedContract(params)
+	if err != nil {
+		return err
+	}
+
+	if resp.RetCode != 0 {
+		return fmt.Errorf("错误: %s, code: %d", resp.Message, resp.RetCode)
+	}
+
+	return nil
 }

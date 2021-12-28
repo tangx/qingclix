@@ -148,3 +148,20 @@ func (cli *Client) DissociateReservedContract(params DissociateReservedContractR
 	err = cli.MethodGET("DissociateReservedContract", params, &resp)
 	return
 }
+
+// TerminateReservedContract 退订合约
+func (cli *Client) TerminateReservedContract(params TerminateReservedContractRequest) (resp TerminateReservedContractResponse, err error) {
+	err = cli.MethodGET("TerminateReservedContract", params, &resp)
+	return
+}
+
+type TerminateReservedContractRequest struct {
+	ContractID string `json:"contract_id,omitempty" url:"contract_id,omitempty"`
+	IsConfirm  int    `json:"is_confirm,omitempty" url:"is_confirm,omitempty"`
+}
+type TerminateReservedContractResponse struct {
+	Message string `json:"message,omitempty"`
+	RetCode int    `json:"ret_code,omitempty"`
+}
+
+//  url:"server_certificates"
