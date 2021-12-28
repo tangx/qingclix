@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"bufio"
-	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -15,7 +13,7 @@ var contractCmdDissocite = &cobra.Command{
 	Use:   "dissocite",
 	Short: "为资源解绑合约",
 	Run: func(cmd *cobra.Command, args []string) {
-		if !isDissocateValidArgs() {
+		if !isDissocateValidArgs(dissociteTargets) {
 			_ = cmd.Help()
 			return
 		}
@@ -38,45 +36,6 @@ func init() {
 	contractCmdDissocite.Flags().StringVarP(&dissociteTargetType, "type", "", "instance", `为指定资源制定类型，所有资源必须为相同类型。
 可选项: instance | volume`)
 
-}
-
-func isDissocateValidArgs() bool {
-	if len(dissociteTargets) == 0 && len(fileToDissocite) == 0 {
-		return false
-	}
-
-	return true
-}
-
-func targetsFromString(str string) (ret []string) {
-	for _, res := range strings.Split(str, ",") {
-		res = strings.TrimSpace(res)
-		if len(res) == 0 {
-			continue
-		}
-		ret = append(ret, res)
-	}
-	return
-}
-
-func targetsFromFile(file string) (targets []string) {
-
-	f, err := os.Open(file)
-	if err != nil {
-		logrus.Errorf("open file %s failed: %v", err)
-		return
-	}
-	defer f.Close()
-
-	buf := bufio.NewScanner(f)
-	for buf.Scan() {
-		line := buf.Text()
-
-		ret := targetsFromString(line)
-		targets = append(targets, ret...)
-	}
-
-	return
 }
 
 func doDissociteContract() {
