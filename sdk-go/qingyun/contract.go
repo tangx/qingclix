@@ -14,6 +14,7 @@ type ApplyReservedContractWithResourcesResponse struct {
 	RetCode         int    `json:"ret_code"`
 }
 
+// ApplyReservedContractWithResources 为资源申请合约
 func (cli *Client) ApplyReservedContractWithResources(params ApplyReservedContractWithResourcesRequest) (resp ApplyReservedContractWithResourcesResponse, err error) {
 	err = cli.MethodGET("ApplyReservedContractWithResources", params, &resp)
 	return
@@ -31,6 +32,7 @@ type AssociateReservedContractResponse struct {
 	Message string        `json:"message,omitempty"`
 }
 
+// AssociateReservedContract 关联合约与资源
 func (cli *Client) AssociateReservedContract(params AssociateReservedContractRequest) (resp AssociateReservedContractResponse, err error) {
 	err = cli.MethodGET("AssociateReservedContract", params, &resp)
 	return
@@ -46,6 +48,7 @@ type LeaseReservedContractResponse struct {
 	Message string `json:"message,omitempty"`
 }
 
+// LeaseReservedContract 支付合约
 func (cli *Client) LeaseReservedContract(params LeaseReservedContractRequest) (resp LeaseReservedContractResponse, err error) {
 	err = cli.MethodGET("LeaseReservedContract", params, &resp)
 	return
@@ -119,6 +122,7 @@ type LastApplyment struct {
 	ZoneID        string        `json:"zone_id"`
 }
 
+// DescribeReservedContracts 描述合约信息
 func (cli *Client) DescribeReservedContracts(params DescribeReservedContractsRequest) (resp DescribeReservedContractsResponse, err error) {
 	err = cli.MethodGET("DescribeReservedContracts", params, &resp)
 	return
@@ -139,6 +143,7 @@ type DissociateReservedContractResponse struct {
 	Message string   `json:"message,omitempty"`
 }
 
+// DissociateReservedContract 解绑资源与合约
 func (cli *Client) DissociateReservedContract(params DissociateReservedContractRequest) (resp DissociateReservedContractResponse, err error) {
 	err = cli.MethodGET("DissociateReservedContract", params, &resp)
 	return

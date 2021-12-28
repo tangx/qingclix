@@ -15,5 +15,7 @@ build.x:
 build:
 	go build -o out/$(BINARY)-$(VERSION)-$(GOOS)-$(GOARCH) .
 
+install: build
+	mv out/$(BINARY)-$(VERSION)-$(GOOS)-$(GOARCH) /usr/local/bin/qingclix
 clean:
 	rm -rf out
