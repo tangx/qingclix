@@ -11,6 +11,7 @@ import (
 func DescContract(id string) qingyun.DescribeReservedContractsResponse {
 	params := qingyun.DescribeReservedContractsRequest{
 		ReservedContracts: []string{id},
+		Verbose:           1,
 	}
 	resp, err := global.QingClix.DescribeReservedContracts(params)
 	if err != nil {
@@ -131,4 +132,23 @@ func TerminateContract(contract string, confirm bool) error {
 	}
 
 	return nil
+}
+
+func DescribeReservedResources(rce_id string) (*qingyun.DescribeReservedResourcesResponse, error) {
+	params := qingyun.DescribeReservedResourcesRequest{
+		Entry:   rce_id,
+		Verbose: 1,
+		SortKey: "create_time",
+		Reverse: 1,
+		Offset:  0,
+		Limit:   10,
+		// Action:  "DescribeReservedResources",
+	}
+
+	resp, err := global.QingClix.DescribeReservedResources(params)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
 }

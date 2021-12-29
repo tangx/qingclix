@@ -7,6 +7,7 @@ require (
 	github.com/magefile/mage v1.11.0 // indirect
 	github.com/onsi/gomega v1.10.5
 	github.com/satori/go.uuid v1.2.0
+	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.8.0
 	github.com/spf13/cobra v1.1.1
 	github.com/tangx/go-querystring v1.0.1

@@ -1,5 +1,7 @@
 package qingyun
 
+import "github.com/shopspring/decimal"
+
 type ApplyReservedContractWithResourcesRequest struct {
 	Zone      string   `yaml:"zone,omitempty" json:"zone,omitempty" url:"zone,omitempty"`
 	Resources []string `yaml:"resources,omitempty" json:"resources,omitempty" url:"resources,omitempty,dotnumbered,numbered1"`
@@ -67,6 +69,7 @@ type DescribeReservedContractsRequest struct {
 	Offset            int      `yaml:"offset,omitempty" json:"offset,omitempty" url:"offset,omitempty"`
 	ReservedContracts []string `yaml:"reserved_contracts,omitempty" json:"reserved_contracts,omitempty" url:"reserved_contracts,omitempty,dotnumbered,numbered1"`
 	ResourceType      []string `yaml:"resource_type,omitempty" json:"resource_type,omitempty" url:"resource_type,omitempty,dotnumbered,numbered1"`
+	Verbose           int      `yaml:"verbose,omitempty" json:"verbose,omitempty" url:"verbose,omitempty"`
 }
 
 type DescribeReservedContractsResponse struct {
@@ -74,6 +77,7 @@ type DescribeReservedContractsResponse struct {
 	TotalCount          int                   `json:"total_count"`
 	ReservedContractSet []ReservedContractSet `json:"reserved_contract_set"`
 	RetCode             int                   `json:"ret_code"`
+	Message             string                `json:"message"`
 }
 
 type ReservedContractSet struct {
@@ -93,12 +97,21 @@ type ReservedContractSet struct {
 	Description       string        `json:"description"`
 	TransitionStatus  string        `json:"transition_status"`
 	LastApplymentType string        `json:"last_applyment_type"`
-	Entries           []interface{} `json:"entries"`
+	Entries           []Entry       `json:"entries"`
 	ExpireTime        string        `json:"expire_time"`
 	ZoneID            string        `json:"zone_id"`
 	Months            int           `json:"months"`
 	RootUserID        string        `json:"root_user_id"`
 	ResourceType      string        `json:"resource_type"`
+}
+
+type Entry struct {
+	Count        int64           `json:"count"`
+	ProductID    interface{}     `json:"product_id"`
+	Price        decimal.Decimal `json:"price"`
+	ApplymentID  string          `json:"applyment_id"`
+	EntryID      string          `json:"entry_id"`
+	ResourceInfo interface{}     `json:"resource_info"`
 }
 
 type LastApplyment struct {
@@ -164,4 +177,41 @@ type TerminateReservedContractResponse struct {
 	RetCode int    `json:"ret_code,omitempty"`
 }
 
-//  url:"server_certificates"
+// DescribeReservedResources 查询 rce 订单绑定的资源情况
+func (cli *Client) DescribeReservedResources(params DescribeReservedResourcesRequest) (resp DescribeReservedResourcesResponse, err error) {
+	params.Action = "DescribeReservedResources"
+	err = cli.MethodGET("DescribeReservedResources", params, &resp)
+	return
+}
+
+type DescribeReservedResourcesRequest struct {
+	Owner   string `json:"owner,omitempty" url:"owner,omitempty"`
+	Zone    string `json:"zone,omitempty" url:"zone,omitempty"`
+	Action  string `json:"action,omitempty" url:"action,omitempty"`
+	Offset  int    `json:"offset,omitempty" url:"offset,omitempty"`
+	Limit   int    `json:"limit,omitempty" url:"limit,omitempty"`
+	Verbose int    `json:"verbose,omitempty" url:"verbose,omitempty"`
+	SortKey string `json:"sort_key,omitempty" url:"sort_key,omitempty"`
+	Reverse int    `json:"reverse,omitempty" url:"reverse,omitempty"`
+	Entry   string `json:"entry,omitempty" url:"entry,omitempty"`
+}
+
+type DescribeReservedResourcesResponse struct {
+	Action              string                `json:"action"`
+	TotalCount          int                   `json:"total_count"`
+	ReservedResourceSet []ReservedResourceSet `json:"reserved_resource_set"`
+	ZoneID              string                `json:"zone_id"`
+	RetCode             int                   `json:"ret_code"`
+}
+
+type ReservedResourceSet struct {
+	ResourceName   string `json:"resource_name"`
+	UserID         string `json:"user_id"`
+	ZoneID         string `json:"zone_id"`
+	ResourceID     string `json:"resource_id"`
+	ResourceStatus string `json:"resource_status"`
+	RootUserID     string `json:"root_user_id"`
+	CreateTime     string `json:"create_time"`
+	EntryID        string `json:"entry_id"`
+	ContractID     string `json:"contract_id"`
+}
