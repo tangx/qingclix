@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.6.1](https://github.com/tangx/qingclix/compare/v1.6.0...v1.6.1)
+
+### Bug Fixes
+
+* **fix** Real terminate ([b7658ea](https://github.com/tangx/qingclix/commit/b7658ead8e0a1fbc91b2fdb45e01a63cecd1ff0b))
+
+
+
 # [1.6.0](https://github.com/tangx/qingclix/compare/v1.5.1...v1.6.0)
 
 ### Features
