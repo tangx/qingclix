@@ -56,11 +56,11 @@ func terminateContract() {
 			continue
 		}
 
-		// err = modules.TerminateContract(contract, true)
-		// if err != nil {
-		// 	logrus.Errorf("释放合约 (%s) 失败: %v", contract, err)
-		// 	continue
-		// }
+		err = modules.TerminateContract(contract, true)
+		if err != nil {
+			logrus.Errorf("释放合约 (%s) 失败: %v", contract, err)
+			continue
+		}
 
 		logrus.Infof("释放合约 (%s) 成功", contract)
 	}
