@@ -5,6 +5,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [1.6.0](https://github.com/tangx/qingclix/compare/v1.5.1...v1.6.0)
+
+### Features
+
+* **feat** 终止合约 ([a3442e3](https://github.com/tangx/qingclix/commit/a3442e35265b18f683e68bc6a792b7b989927201))
+* **feat** 终止合约 ([1791d82](https://github.com/tangx/qingclix/commit/1791d82cfb53d52c346f1d1707d8362f60f8b95c))
+
+
+
 # [1.5.1](https://github.com/tangx/qingclix/compare/v1.5.0...v1.5.1)
 
 ### Bug Fixes
